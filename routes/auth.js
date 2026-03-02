@@ -5,73 +5,69 @@ const jwt = require('jsonwebtoken');
 const { getDb } = require('../database/init');
 const authMiddleware = require('../middleware/auth');
 
+const JWT_SECRET = process.env.JWT_SECRET || 'maxs1el_secret_key_2024';
+
 // POST /api/auth/login
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-
         if (!username || !password) {
-            return res.status(400).json({ error: 'Username and password are required.' });
+            return res.status(400).json({ error: 'Username and password required.' });
         }
 
         const db = getDb();
-        const admin = db.prepare('SELECT * FROM admins WHERE username = ?').get(username);
+        const result = await db.execute('SELECT * FROM admins WHERE username = ?', [username]);
+        const admin = result.rows[0];
 
         if (!admin) {
             return res.status(401).json({ error: 'Invalid credentials.' });
         }
 
-        const validPassword = bcrypt.compareSync(password, admin.password);
-        if (!validPassword) {
+        const isValid = bcrypt.compareSync(password, admin.password);
+        if (!isValid) {
             return res.status(401).json({ error: 'Invalid credentials.' });
         }
 
-        const token = jwt.sign(
-            { id: admin.id, username: admin.username },
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' }
-        );
+        const token = jwt.sign({ id: admin.id, username: admin.username }, JWT_SECRET, { expiresIn: '7d' });
 
-        res.json({
-            success: true,
-            token,
-            admin: { id: admin.id, username: admin.username }
-        });
+        res.json({ success: true, token, admin: { id: admin.id, username: admin.username } });
     } catch (err) {
         console.error('Login error:', err);
         res.status(500).json({ error: 'Server error.' });
     }
 });
 
-// GET /api/auth/me
-router.get('/me', authMiddleware, (req, res) => {
+// GET /api/auth/me — protected
+router.get('/me', authMiddleware, async (req, res) => {
     try {
         const db = getDb();
-        const admin = db.prepare('SELECT id, username, created_at FROM admins WHERE id = ?').get(req.admin.id);
+        const result = await db.execute('SELECT id, username, created_at FROM admins WHERE id = ?', [req.admin.id]);
+        const admin = result.rows[0];
         if (!admin) return res.status(404).json({ error: 'Admin not found.' });
-        res.json({ admin });
+        res.json(admin);
     } catch (err) {
         res.status(500).json({ error: 'Server error.' });
     }
 });
 
-// PUT /api/auth/password
-router.put('/password', authMiddleware, (req, res) => {
+// PUT /api/auth/password — protected
+router.put('/password', authMiddleware, async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
         if (!currentPassword || !newPassword) {
-            return res.status(400).json({ error: 'Both current and new password required.' });
+            return res.status(400).json({ error: 'Both passwords required.' });
         }
 
         const db = getDb();
-        const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(req.admin.id);
+        const result = await db.execute('SELECT * FROM admins WHERE id = ?', [req.admin.id]);
+        const admin = result.rows[0];
 
         if (!bcrypt.compareSync(currentPassword, admin.password)) {
-            return res.status(401).json({ error: 'Current password is incorrect.' });
+            return res.status(401).json({ error: 'Current password is wrong.' });
         }
 
         const hashed = bcrypt.hashSync(newPassword, 10);
-        db.prepare('UPDATE admins SET password = ? WHERE id = ?').run(hashed, req.admin.id);
+        await db.execute('UPDATE admins SET password = ? WHERE id = ?', [hashed, req.admin.id]);
 
         res.json({ success: true, message: 'Password updated.' });
     } catch (err) {

@@ -5,20 +5,18 @@ const { getDb } = require('../database/init');
 // GET /api/daily-quote
 router.get('/', async (req, res) => {
     try {
-        // Try external API first
         let quote = null;
 
+        // Try external API
         try {
-            const fetch = require('node-fetch');
             const response = await fetch('https://api.quotable.io/random?tags=technology|wisdom|inspirational', {
-                timeout: 3000
+                signal: AbortSignal.timeout(3000)
             });
             if (response.ok) {
                 const data = await response.json();
                 quote = { text: data.content, author: data.author };
             }
         } catch (apiErr) {
-            // External API failed, use fallback
             console.log('Quote API unavailable, using local fallback');
         }
 
@@ -27,11 +25,14 @@ router.get('/', async (req, res) => {
             const db = getDb();
             const today = new Date();
             const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
-            const totalQuotes = db.prepare('SELECT COUNT(*) as c FROM daily_quotes').get().c;
+
+            const countResult = await db.execute('SELECT COUNT(*) as c FROM daily_quotes');
+            const totalQuotes = Number(countResult.rows[0].c);
 
             if (totalQuotes > 0) {
                 const offset = dayOfYear % totalQuotes;
-                quote = db.prepare('SELECT text, author FROM daily_quotes LIMIT 1 OFFSET ?').get(offset);
+                const quoteResult = await db.execute('SELECT text, author FROM daily_quotes LIMIT 1 OFFSET ?', [offset]);
+                quote = quoteResult.rows[0];
             } else {
                 quote = { text: 'Every pixel tells a story.', author: 'maxs1el' };
             }

@@ -5,7 +5,6 @@ const { getDb } = require('../database/init');
 const authMiddleware = require('../middleware/auth');
 const tokopay = require('../services/tokopay');
 
-// Generate unique order ID
 function generateOrderId() {
     const timestamp = Date.now().toString(36).toUpperCase();
     const random = crypto.randomBytes(3).toString('hex').toUpperCase();
@@ -16,58 +15,35 @@ function generateOrderId() {
 router.post('/', async (req, res) => {
     try {
         const { product_id, payment_method, buyer_email, buyer_name } = req.body;
-
         if (!product_id || !payment_method) {
             return res.status(400).json({ error: 'Product ID and payment method are required.' });
         }
 
         const db = getDb();
-        const product = db.prepare('SELECT * FROM products WHERE id = ? AND is_active = 1').get(product_id);
+        const productResult = await db.execute('SELECT * FROM products WHERE id = ? AND is_active = 1', [product_id]);
+        const product = productResult.rows[0];
 
-        if (!product) {
-            return res.status(404).json({ error: 'Product not found.' });
-        }
-
-        if (product.stock <= 0) {
-            return res.status(400).json({ error: 'Product is out of stock.' });
-        }
+        if (!product) return res.status(404).json({ error: 'Product not found.' });
+        if (product.stock <= 0) return res.status(400).json({ error: 'Product is out of stock.' });
 
         const orderId = generateOrderId();
 
-        // Create Tokopay transaction
         const payment = await tokopay.createTransaction(orderId, product.price * 15000, payment_method, {
-            productId: product.id.toString(),
+            productId: String(product.id),
             productName: product.name,
         });
 
-        // Insert order
-        db.prepare(`
-      INSERT INTO orders (order_id, product_id, product_name, amount, payment_method, payment_url, qr_url, status, buyer_email, buyer_name, tokopay_ref)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-            orderId,
-            product.id,
-            product.name,
-            product.price,
-            payment_method,
-            payment.paymentUrl || null,
-            payment.qrUrl || null,
-            'pending',
-            buyer_email || null,
-            buyer_name || null,
-            payment.reference || null
+        await db.execute(
+            'INSERT INTO orders (order_id, product_id, product_name, amount, payment_method, payment_url, qr_url, status, buyer_email, buyer_name, tokopay_ref) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [orderId, product.id, product.name, product.price, payment_method, payment.paymentUrl || null, payment.qrUrl || null, 'pending', buyer_email || null, buyer_name || null, payment.reference || null]
         );
 
-        const order = db.prepare('SELECT * FROM orders WHERE order_id = ?').get(orderId);
+        const orderResult = await db.execute('SELECT * FROM orders WHERE order_id = ?', [orderId]);
 
         res.status(201).json({
             success: true,
-            order,
-            payment: {
-                url: payment.paymentUrl,
-                qr: payment.qrUrl,
-                reference: payment.reference
-            }
+            order: orderResult.rows[0],
+            payment: { url: payment.paymentUrl, qr: payment.qrUrl, reference: payment.reference }
         });
     } catch (err) {
         console.error('Order create error:', err);
@@ -75,52 +51,41 @@ router.post('/', async (req, res) => {
     }
 });
 
-// GET /api/orders/:orderId — public, order status
-router.get('/:orderId', (req, res) => {
+// GET /api/orders/:orderId
+router.get('/:orderId', async (req, res) => {
     try {
         const db = getDb();
-        const order = db.prepare('SELECT * FROM orders WHERE order_id = ?').get(req.params.orderId);
-
-        if (!order) {
-            return res.status(404).json({ error: 'Order not found.' });
-        }
-
-        res.json(order);
+        const result = await db.execute('SELECT * FROM orders WHERE order_id = ?', [req.params.orderId]);
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Order not found.' });
+        res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: 'Server error.' });
     }
 });
 
-// POST /api/webhooks/tokopay — Tokopay callback
-router.post('/webhook/tokopay', (req, res) => {
+// POST /api/orders/webhook/tokopay
+router.post('/webhook/tokopay', async (req, res) => {
     try {
         const data = req.body;
         console.log('🔔 Tokopay webhook received:', data);
 
-        // Verify signature
         const isValid = tokopay.verifyWebhookSignature(data);
-        if (!isValid) {
-            console.warn('⚠️ Invalid webhook signature');
-            return res.status(403).json({ error: 'Invalid signature.' });
-        }
+        if (!isValid) return res.status(403).json({ error: 'Invalid signature.' });
 
         const db = getDb();
-        const order = db.prepare('SELECT * FROM orders WHERE order_id = ?').get(data.reff_id);
+        const orderResult = await db.execute('SELECT * FROM orders WHERE order_id = ?', [data.reff_id]);
+        if (orderResult.rows.length === 0) return res.status(404).json({ error: 'Order not found.' });
 
-        if (!order) {
-            return res.status(404).json({ error: 'Order not found.' });
-        }
-
-        // Update order status
+        const order = orderResult.rows[0];
         const newStatus = data.status === 'Paid' || data.status === 'paid' ? 'paid' : data.status.toLowerCase();
 
-        db.prepare(`
-      UPDATE orders SET status = ?, tokopay_ref = COALESCE(?, tokopay_ref), updated_at = CURRENT_TIMESTAMP WHERE order_id = ?
-    `).run(newStatus, data.trx_id || null, data.reff_id);
+        await db.execute(
+            'UPDATE orders SET status = ?, tokopay_ref = COALESCE(?, tokopay_ref), updated_at = CURRENT_TIMESTAMP WHERE order_id = ?',
+            [newStatus, data.trx_id || null, data.reff_id]
+        );
 
-        // Decrease stock if paid
         if (newStatus === 'paid') {
-            db.prepare('UPDATE products SET stock = MAX(0, stock - 1) WHERE id = ?').run(order.product_id);
+            await db.execute('UPDATE products SET stock = MAX(0, stock - 1) WHERE id = ?', [order.product_id]);
         }
 
         res.json({ success: true, status: newStatus });
@@ -130,8 +95,8 @@ router.post('/webhook/tokopay', (req, res) => {
     }
 });
 
-// GET /api/admin/orders — protected, list all orders
-router.get('/admin/list', authMiddleware, (req, res) => {
+// GET /api/orders/admin/list — protected
+router.get('/admin/list', authMiddleware, async (req, res) => {
     try {
         const db = getDb();
         const { status, limit } = req.query;
@@ -139,20 +104,12 @@ router.get('/admin/list', authMiddleware, (req, res) => {
         let query = 'SELECT * FROM orders';
         const params = [];
 
-        if (status) {
-            query += ' WHERE status = ?';
-            params.push(status);
-        }
-
+        if (status) { query += ' WHERE status = ?'; params.push(status); }
         query += ' ORDER BY created_at DESC';
+        if (limit) { query += ' LIMIT ?'; params.push(parseInt(limit)); }
 
-        if (limit) {
-            query += ' LIMIT ?';
-            params.push(parseInt(limit));
-        }
-
-        const orders = db.prepare(query).all(...params);
-        res.json(orders);
+        const result = await db.execute(query, params);
+        res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: 'Server error.' });
     }

@@ -1,23 +1,19 @@
 const { getDb } = require('../database/init');
 
+// Analytics tracking middleware
 function analyticsMiddleware(req, res, next) {
-    // Only track HTML page requests
-    if (req.method === 'GET' && !req.path.startsWith('/api/') && !req.path.startsWith('/uploads/')) {
-        try {
-            const db = getDb();
-            db.prepare(`
-        INSERT INTO visits (path, referrer, user_agent, ip) VALUES (?, ?, ?, ?)
-      `).run(
-                req.path,
-                req.headers.referer || null,
-                req.headers['user-agent'] || null,
-                req.ip
-            );
-        } catch (err) {
-            // Don't let analytics errors break the app
-            console.error('Analytics tracking error:', err.message);
-        }
+    // Only track page views, not API calls or static files
+    if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/') || req.path.includes('.')) {
+        return next();
     }
+
+    // Track async, don't block response
+    const db = getDb();
+    db.execute(
+        'INSERT INTO visits (path, referrer, user_agent, ip) VALUES (?, ?, ?, ?)',
+        [req.path, req.headers.referer || null, req.headers['user-agent'] || null, req.ip || null]
+    ).catch(err => console.error('Analytics tracking error:', err));
+
     next();
 }
 

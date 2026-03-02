@@ -6,20 +6,31 @@ const path = require('path');
 const { initializeDatabase } = require('./database/init');
 const analyticsMiddleware = require('./middleware/analytics');
 
-// Initialize database & seed data
-initializeDatabase();
-
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ─── Initialize DB (async) ───
+let dbReady = false;
+const dbInit = initializeDatabase().then(() => {
+    dbReady = true;
+    console.log('✅ DB ready');
+}).catch(err => {
+    console.error('❌ DB init failed:', err);
+});
 
 // ─── Middleware ───
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Wait for DB before handling requests
+app.use(async (req, res, next) => {
+    if (!dbReady) await dbInit;
+    next();
+});
+
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
 // Analytics tracking
 app.use(analyticsMiddleware);
@@ -61,15 +72,17 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal server error.' });
 });
 
-// ─── Start Server ───
-app.listen(PORT, () => {
-    console.log(`
+// ─── Start Server (only in non-Vercel environment) ───
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`
   ╔══════════════════════════════════════╗
   ║   🎮 maxs1el Server Running!        ║
   ║   📡 http://localhost:${PORT}           ║
   ║   🔧 Environment: ${process.env.NODE_ENV || 'development'}     ║
   ╚══════════════════════════════════════╝
-  `);
-});
+    `);
+    });
+}
 
 module.exports = app;

@@ -3,16 +3,14 @@ const router = express.Router();
 const { getDb } = require('../database/init');
 const authMiddleware = require('../middleware/auth');
 
-// POST /api/track/visit — public, track page visit
-router.post('/visit', (req, res) => {
+// POST /api/analytics/visit — public
+router.post('/visit', async (req, res) => {
     try {
         const { path } = req.body;
         const db = getDb();
-        db.prepare('INSERT INTO visits (path, referrer, user_agent, ip) VALUES (?, ?, ?, ?)').run(
-            path || '/',
-            req.headers.referer || null,
-            req.headers['user-agent'] || null,
-            req.ip
+        await db.execute(
+            'INSERT INTO visits (path, referrer, user_agent, ip) VALUES (?, ?, ?, ?)',
+            [path || '/', req.headers.referer || null, req.headers['user-agent'] || null, req.ip || null]
         );
         res.json({ success: true });
     } catch (err) {
@@ -20,75 +18,55 @@ router.post('/visit', (req, res) => {
     }
 });
 
-// GET /api/admin/stats — protected, dashboard stats
-router.get('/stats', authMiddleware, (req, res) => {
+// GET /api/analytics/stats — protected
+router.get('/stats', authMiddleware, async (req, res) => {
     try {
         const db = getDb();
 
-        // Total visitors (all time)
-        const totalVisits = db.prepare('SELECT COUNT(*) as total FROM visits').get().total;
+        const totalResult = await db.execute('SELECT COUNT(*) as total FROM visits');
+        const totalVisits = Number(totalResult.rows[0].total);
 
-        // Visitors today
-        const todayVisits = db.prepare(
-            "SELECT COUNT(*) as total FROM visits WHERE DATE(created_at) = DATE('now')"
-        ).get().total;
+        const todayResult = await db.execute("SELECT COUNT(*) as total FROM visits WHERE DATE(created_at) = DATE('now')");
+        const todayVisits = Number(todayResult.rows[0].total);
 
-        // Visitors this week
-        const weekVisits = db.prepare(
-            "SELECT COUNT(*) as total FROM visits WHERE created_at >= datetime('now', '-7 days')"
-        ).get().total;
+        const weekResult = await db.execute("SELECT COUNT(*) as total FROM visits WHERE created_at >= datetime('now', '-7 days')");
+        const weekVisits = Number(weekResult.rows[0].total);
 
-        // Total products
-        const totalProducts = db.prepare('SELECT COUNT(*) as total FROM products WHERE is_active = 1').get().total;
+        const productsResult = await db.execute('SELECT COUNT(*) as total FROM products WHERE is_active = 1');
+        const totalProducts = Number(productsResult.rows[0].total);
 
-        // Total orders
-        const totalOrders = db.prepare('SELECT COUNT(*) as total FROM orders').get().total;
+        const ordersResult = await db.execute('SELECT COUNT(*) as total FROM orders');
+        const totalOrders = Number(ordersResult.rows[0].total);
 
-        // Revenue (paid orders)
-        const revenue = db.prepare(
-            "SELECT COALESCE(SUM(amount), 0) as total FROM orders WHERE status = 'paid'"
-        ).get().total;
+        const revenueResult = await db.execute("SELECT COALESCE(SUM(amount), 0) as total FROM orders WHERE status = 'paid'");
+        const revenue = Number(revenueResult.rows[0].total);
 
-        // Weekly traffic data (last 7 days)
-        const weeklyTraffic = db.prepare(`
-      SELECT 
-        DATE(created_at) as date,
-        COUNT(*) as count
-      FROM visits 
-      WHERE created_at >= datetime('now', '-7 days')
-      GROUP BY DATE(created_at)
-      ORDER BY date ASC
-    `).all();
+        const trafficResult = await db.execute(`
+      SELECT DATE(created_at) as date, COUNT(*) as count
+      FROM visits WHERE created_at >= datetime('now', '-7 days')
+      GROUP BY DATE(created_at) ORDER BY date ASC
+    `);
+        const weeklyTraffic = trafficResult.rows;
 
-        // Top clicked links
-        const topLinks = db.prepare(
-            'SELECT title, clicks FROM social_links ORDER BY clicks DESC LIMIT 5'
-        ).all();
+        const linksResult = await db.execute('SELECT title, clicks FROM social_links ORDER BY clicks DESC LIMIT 5');
+        const topLinks = linksResult.rows;
 
-        // Recent orders
-        const recentOrders = db.prepare(
-            'SELECT * FROM orders ORDER BY created_at DESC LIMIT 5'
-        ).all();
+        const recentResult = await db.execute('SELECT * FROM orders ORDER BY created_at DESC LIMIT 5');
+        const recentOrders = recentResult.rows;
 
-        // Growth percentage (compare this week to last week)
-        const lastWeekVisits = db.prepare(
+        const lastWeekResult = await db.execute(
             "SELECT COUNT(*) as total FROM visits WHERE created_at >= datetime('now', '-14 days') AND created_at < datetime('now', '-7 days')"
-        ).get().total;
+        );
+        const lastWeekVisits = Number(lastWeekResult.rows[0].total);
 
         const visitGrowth = lastWeekVisits > 0
             ? (((weekVisits - lastWeekVisits) / lastWeekVisits) * 100).toFixed(1)
             : 100;
 
         res.json({
-            totalVisits,
-            todayVisits,
-            weekVisits,
-            totalProducts,
-            totalOrders,
-            revenue,
-            weeklyTraffic,
-            topLinks,
-            recentOrders,
+            totalVisits, todayVisits, weekVisits,
+            totalProducts, totalOrders, revenue,
+            weeklyTraffic, topLinks, recentOrders,
             visitGrowth: parseFloat(visitGrowth)
         });
     } catch (err) {
