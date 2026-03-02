@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/auth');
 // GET /api/profile — public
 router.get('/', async (req, res) => {
     try {
-        const db = getDb();
+        const db = await getDb();
         const profileResult = await db.execute('SELECT * FROM profile LIMIT 1');
         const profile = profileResult.rows[0];
 
@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
 router.put('/', authMiddleware, async (req, res) => {
     try {
         const { name, title, subtitle, bio, badge_text, created_since, skills, hobbies } = req.body;
-        const db = getDb();
+        const db = await getDb();
 
         await db.execute(
             'UPDATE profile SET name = ?, title = ?, subtitle = ?, bio = ?, badge_text = ?, created_since = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1',
@@ -68,7 +68,7 @@ router.post('/avatar', authMiddleware, async (req, res) => {
         const { avatar_url } = req.body;
         if (!avatar_url) return res.status(400).json({ error: 'Avatar URL required.' });
 
-        const db = getDb();
+        const db = await getDb();
         await db.execute('UPDATE profile SET avatar = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1', [avatar_url]);
 
         res.json({ success: true, avatar: avatar_url });

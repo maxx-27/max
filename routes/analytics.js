@@ -7,7 +7,7 @@ const authMiddleware = require('../middleware/auth');
 router.post('/visit', async (req, res) => {
     try {
         const { path } = req.body;
-        const db = getDb();
+        const db = await getDb();
         await db.execute(
             'INSERT INTO visits (path, referrer, user_agent, ip) VALUES (?, ?, ?, ?)',
             [path || '/', req.headers.referer || null, req.headers['user-agent'] || null, req.ip || null]
@@ -21,7 +21,7 @@ router.post('/visit', async (req, res) => {
 // GET /api/analytics/stats — protected
 router.get('/stats', authMiddleware, async (req, res) => {
     try {
-        const db = getDb();
+        const db = await getDb();
 
         const totalResult = await db.execute('SELECT COUNT(*) as total FROM visits');
         const totalVisits = Number(totalResult.rows[0].total);

@@ -15,7 +15,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ error: 'Username and password required.' });
         }
 
-        const db = getDb();
+        const db = await getDb();
         const result = await db.execute('SELECT * FROM admins WHERE username = ?', [username]);
         const admin = result.rows[0];
 
@@ -40,7 +40,7 @@ router.post('/login', async (req, res) => {
 // GET /api/auth/me — protected
 router.get('/me', authMiddleware, async (req, res) => {
     try {
-        const db = getDb();
+        const db = await getDb();
         const result = await db.execute('SELECT id, username, created_at FROM admins WHERE id = ?', [req.admin.id]);
         const admin = result.rows[0];
         if (!admin) return res.status(404).json({ error: 'Admin not found.' });
@@ -58,7 +58,7 @@ router.put('/password', authMiddleware, async (req, res) => {
             return res.status(400).json({ error: 'Both passwords required.' });
         }
 
-        const db = getDb();
+        const db = await getDb();
         const result = await db.execute('SELECT * FROM admins WHERE id = ?', [req.admin.id]);
         const admin = result.rows[0];
 

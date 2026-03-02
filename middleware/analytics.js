@@ -8,11 +8,17 @@ function analyticsMiddleware(req, res, next) {
     }
 
     // Track async, don't block response
-    const db = getDb();
-    db.execute(
-        'INSERT INTO visits (path, referrer, user_agent, ip) VALUES (?, ?, ?, ?)',
-        [req.path, req.headers.referer || null, req.headers['user-agent'] || null, req.ip || null]
-    ).catch(err => console.error('Analytics tracking error:', err));
+    (async () => {
+        try {
+            const db = await getDb();
+            await db.execute(
+                'INSERT INTO visits (path, referrer, user_agent, ip) VALUES (?, ?, ?, ?)',
+                [req.path, req.headers.referer || null, req.headers['user-agent'] || null, req.ip || null]
+            );
+        } catch (err) {
+            console.error('Analytics tracking error:', err);
+        }
+    })();
 
     next();
 }

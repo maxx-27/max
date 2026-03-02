@@ -1,14 +1,37 @@
-const { createClient } = require('@libsql/client');
 const bcrypt = require('bcryptjs');
 
 let db;
+let createClientFn;
 
-function getDb() {
+// Dynamic import: use web client on Vercel, regular on local
+async function getCreateClient() {
+  if (!createClientFn) {
+    if (process.env.VERCEL) {
+      // Vercel serverless: use HTTP-based web client
+      const mod = require('@libsql/client/web');
+      createClientFn = mod.createClient;
+    } else {
+      // Local dev: use regular client (supports file: URLs)
+      const mod = require('@libsql/client');
+      createClientFn = mod.createClient;
+    }
+  }
+  return createClientFn;
+}
+
+async function getDb() {
   if (!db) {
-    // Use Turso in production (Vercel), local file in dev
+    const createClient = await getCreateClient();
+
     if (process.env.TURSO_DATABASE_URL) {
+      // Convert libsql:// to https:// for web client on Vercel
+      let url = process.env.TURSO_DATABASE_URL;
+      if (process.env.VERCEL && url.startsWith('libsql://')) {
+        url = url.replace('libsql://', 'https://');
+      }
+
       db = createClient({
-        url: process.env.TURSO_DATABASE_URL,
+        url: url,
         authToken: process.env.TURSO_AUTH_TOKEN,
       });
     } else {
@@ -22,7 +45,7 @@ function getDb() {
 }
 
 async function initializeDatabase() {
-  const db = getDb();
+  const db = await getDb();
 
   // ─── Create Tables ───
   await db.executeMultiple(`
@@ -120,7 +143,6 @@ async function initializeDatabase() {
   //  SEED DATA
   // ═══════════════════════════════
 
-  // Seed admin user
   const adminCheck = await db.execute('SELECT id FROM admins WHERE username = ?', ['admin']);
   if (adminCheck.rows.length === 0) {
     const hashed = bcrypt.hashSync('admin123', 10);
@@ -128,7 +150,6 @@ async function initializeDatabase() {
     console.log('✅ Default admin created (admin / admin123)');
   }
 
-  // Seed profile
   const profileCheck = await db.execute('SELECT id FROM profile LIMIT 1');
   if (profileCheck.rows.length === 0) {
     await db.execute(
@@ -140,7 +161,6 @@ async function initializeDatabase() {
     console.log('✅ Default profile created');
   }
 
-  // Seed skills
   const skillCheck = await db.execute('SELECT COUNT(*) as c FROM skills');
   if (Number(skillCheck.rows[0].c) === 0) {
     await db.execute('INSERT INTO skills (name, level, sort_order) VALUES (?, ?, ?)', ['UI Design', 'Master', 1]);
@@ -148,7 +168,6 @@ async function initializeDatabase() {
     console.log('✅ Default skills created');
   }
 
-  // Seed hobbies
   const hobbyCheck = await db.execute('SELECT COUNT(*) as c FROM hobbies');
   if (Number(hobbyCheck.rows[0].c) === 0) {
     await db.execute('INSERT INTO hobbies (name, sort_order) VALUES (?, ?)', ['Pixel Art', 1]);
@@ -157,7 +176,6 @@ async function initializeDatabase() {
     console.log('✅ Default hobbies created');
   }
 
-  // Seed social links
   const linkCheck = await db.execute('SELECT COUNT(*) as c FROM social_links');
   if (Number(linkCheck.rows[0].c) === 0) {
     await db.execute('INSERT INTO social_links (title, url, icon, sort_order) VALUES (?, ?, ?, ?)', ['Instagram', 'https://instagram.com/maxs1el', 'photo_camera', 1]);
@@ -167,7 +185,6 @@ async function initializeDatabase() {
     console.log('✅ Default social links created');
   }
 
-  // Seed products
   const productCheck = await db.execute('SELECT COUNT(*) as c FROM products');
   if (Number(productCheck.rows[0].c) === 0) {
     await db.execute(
@@ -189,7 +206,6 @@ async function initializeDatabase() {
     console.log('✅ Default products created');
   }
 
-  // Seed fallback quotes
   const quoteCheck = await db.execute('SELECT COUNT(*) as c FROM daily_quotes');
   if (Number(quoteCheck.rows[0].c) === 0) {
     const quotes = [
