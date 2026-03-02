@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/auth');
 // GET /api/links — public
 router.get('/', async (req, res) => {
     try {
-        const db = await getDb();
+        const db = getDb();
         const result = await db.execute('SELECT * FROM social_links ORDER BY sort_order ASC');
         res.json(result.rows);
     } catch (err) {
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 // POST /api/links/click/:id — public, track click
 router.post('/click/:id', async (req, res) => {
     try {
-        const db = await getDb();
+        const db = getDb();
         await db.execute('UPDATE social_links SET clicks = clicks + 1 WHERE id = ?', [req.params.id]);
         res.json({ success: true });
     } catch (err) {
@@ -31,7 +31,7 @@ router.post('/', authMiddleware, async (req, res) => {
         const { title, url, icon } = req.body;
         if (!title || !url) return res.status(400).json({ error: 'Title and URL required.' });
 
-        const db = await getDb();
+        const db = getDb();
         const maxOrder = await db.execute('SELECT MAX(sort_order) as m FROM social_links');
         const nextOrder = (Number(maxOrder.rows[0]?.m) || 0) + 1;
 
@@ -51,7 +51,7 @@ router.post('/', authMiddleware, async (req, res) => {
 router.put('/:id', authMiddleware, async (req, res) => {
     try {
         const { title, url, icon } = req.body;
-        const db = await getDb();
+        const db = getDb();
 
         await db.execute(
             'UPDATE social_links SET title = ?, url = ?, icon = ? WHERE id = ?',
@@ -68,7 +68,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
 // DELETE /api/links/:id — protected
 router.delete('/:id', authMiddleware, async (req, res) => {
     try {
-        const db = await getDb();
+        const db = getDb();
         await db.execute('DELETE FROM social_links WHERE id = ?', [req.params.id]);
         res.json({ success: true });
     } catch (err) {
@@ -82,7 +82,7 @@ router.put('/reorder/batch', authMiddleware, async (req, res) => {
         const { order } = req.body;
         if (!Array.isArray(order)) return res.status(400).json({ error: 'Order array required.' });
 
-        const db = await getDb();
+        const db = getDb();
         for (let i = 0; i < order.length; i++) {
             await db.execute('UPDATE social_links SET sort_order = ? WHERE id = ?', [i + 1, order[i]]);
         }

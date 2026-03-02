@@ -1,42 +1,27 @@
 const bcrypt = require('bcryptjs');
+const { createClient } = require('@libsql/client');
 
 let db;
-let createClientFn;
 
-async function getCreateClient() {
-  if (!createClientFn) {
-    if (process.env.VERCEL) {
-      const mod = require('@libsql/client/web');
-      createClientFn = mod.createClient;
-    } else {
-      const mod = require('@libsql/client');
-      createClientFn = mod.createClient;
-    }
-  }
-  return createClientFn;
-}
-
-async function getDb() {
+function getDb() {
   if (!db) {
-    const createClient = await getCreateClient();
-
     if (process.env.TURSO_DATABASE_URL) {
-      let url = process.env.TURSO_DATABASE_URL;
-      if (process.env.VERCEL && url.startsWith('libsql://')) {
-        url = url.replace('libsql://', 'https://');
-      }
-      db = createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN });
+      db = createClient({
+        url: process.env.TURSO_DATABASE_URL,
+        authToken: process.env.TURSO_AUTH_TOKEN,
+      });
     } else {
-      db = createClient({ url: 'file:./maxs1el.db' });
+      db = createClient({
+        url: 'file:./maxs1el.db',
+      });
     }
   }
   return db;
 }
 
 async function initializeDatabase() {
-  const client = await getDb();
+  const client = getDb();
 
-  // ─── Create Tables (one by one for web client compatibility) ───
   const tables = [
     `CREATE TABLE IF NOT EXISTS admins (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -124,10 +109,7 @@ async function initializeDatabase() {
     await client.execute(sql);
   }
 
-  // ═══════════════════════════════
-  //  SEED DATA
-  // ═══════════════════════════════
-
+  // ═══ SEED DATA ═══
   const adminCheck = await client.execute('SELECT id FROM admins WHERE username = ?', ['admin']);
   if (adminCheck.rows.length === 0) {
     const hashed = bcrypt.hashSync('admin123', 10);
@@ -140,7 +122,7 @@ async function initializeDatabase() {
     await client.execute(
       'INSERT INTO profile (name, title, subtitle, bio, badge_text, created_since) VALUES (?, ?, ?, ?, ?, ?)',
       ['maxs1el', 'SUPPLIER APP PREM & Content Creator', '8-bit Digital Artist',
-        'Digital architect crafting experiences in the neon void. I believe every pixel has a soul and every line of code tells a story.',
+        'Digital architect crafting experiences in the neon void.',
         'Level 42 Explorer', 'Content Creator since 2021']
     );
     console.log('✅ Default profile created');
@@ -197,9 +179,6 @@ async function initializeDatabase() {
       ['Code is like humor. When you have to explain it, it is bad.', 'Cory House'],
       ['First, solve the problem. Then, write the code.', 'John Johnson'],
       ['Experience is the name everyone gives to their mistakes.', 'Oscar Wilde'],
-      ['The only way to learn a new programming language is by writing programs in it.', 'Dennis Ritchie'],
-      ['Any fool can write code that a computer can understand.', 'Martin Fowler'],
-      ['Programming is not about what you know; it is about what you can figure out.', 'Chris Pine'],
       ['The best error message is the one that never shows up.', 'Thomas Fuchs'],
     ];
     for (const [text, author] of quotes) {

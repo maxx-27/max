@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
 
         // Fallback to local DB
         if (!quote) {
-            const db = await getDb();
+            const db = getDb();
             const today = new Date();
             const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
 

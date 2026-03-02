@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/auth');
 // GET /api/products — public, list all products
 router.get('/', async (req, res) => {
     try {
-        const db = await getDb();
+        const db = getDb();
         const { category, search } = req.query;
 
         let query = 'SELECT * FROM products WHERE is_active = 1';
@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
 // GET /api/products/categories
 router.get('/categories', async (req, res) => {
     try {
-        const db = await getDb();
+        const db = getDb();
         const result = await db.execute('SELECT DISTINCT category FROM products WHERE is_active = 1 ORDER BY category');
         res.json(result.rows.map(r => r.category));
     } catch (err) {
@@ -50,7 +50,7 @@ router.get('/categories', async (req, res) => {
 // GET /api/products/:id — public, single product
 router.get('/:id', async (req, res) => {
     try {
-        const db = await getDb();
+        const db = getDb();
         const result = await db.execute('SELECT * FROM products WHERE id = ? AND is_active = 1', [req.params.id]);
         const product = result.rows[0];
         if (!product) return res.status(404).json({ error: 'Product not found.' });
@@ -69,7 +69,7 @@ router.post('/', authMiddleware, async (req, res) => {
         if (!name || !price) return res.status(400).json({ error: 'Name and price required.' });
 
         const featuresStr = Array.isArray(features) ? features.join('|') : (features || '');
-        const db = await getDb();
+        const db = getDb();
 
         await db.execute(
             'INSERT INTO products (name, description, price, image, category, stock, badge_text, features) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
@@ -88,7 +88,7 @@ router.post('/', authMiddleware, async (req, res) => {
 router.put('/:id', authMiddleware, async (req, res) => {
     try {
         const { name, description, price, category, stock, badge_text, features, image } = req.body;
-        const db = await getDb();
+        const db = getDb();
 
         const check = await db.execute('SELECT * FROM products WHERE id = ?', [req.params.id]);
         if (check.rows.length === 0) return res.status(404).json({ error: 'Product not found.' });
@@ -111,7 +111,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
 // DELETE /api/products/:id — protected, soft delete
 router.delete('/:id', authMiddleware, async (req, res) => {
     try {
-        const db = await getDb();
+        const db = getDb();
         await db.execute('UPDATE products SET is_active = 0 WHERE id = ?', [req.params.id]);
         res.json({ success: true, message: 'Product deleted.' });
     } catch (err) {
