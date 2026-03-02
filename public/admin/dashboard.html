@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Admin Dashboard | maxs1el</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#0df2f2", "secondary": "#a855f7", "background-light": "#f5f8f8", "background-dark": "#102222" },
+                    fontFamily: { "display": ["Space Grotesk"] },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .neon-glow-blue {
+            text-shadow: 0 0 8px #0df2f2;
+        }
+
+        .neon-glow-purple {
+            text-shadow: 0 0 8px #a855f7;
+        }
+
+        .grid-bg {
+            background-image: linear-gradient(to right, #1a3333 1px, transparent 1px), linear-gradient(to bottom, #1a3333 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen grid-bg">
+    <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+        <!-- Header -->
+        <div
+            class="flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 border-b border-primary/20 justify-between sticky top-0 z-10">
+            <div class="flex items-center gap-3">
+                <div class="bg-primary/20 p-2 rounded">
+                    <span class="material-symbols-outlined text-primary neon-glow-blue">grid_view</span>
+                </div>
+                <h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight uppercase">
+                    maxs1el <span class="text-primary">Admin</span>
+                </h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="API.logout()"
+                    class="size-10 rounded bg-red-500/20 flex items-center justify-center border border-red-500/40 hover:bg-red-500/40 transition-colors"
+                    title="Logout">
+                    <span class="material-symbols-outlined text-red-400">logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Stats Cards -->
+        <div class="flex flex-wrap gap-4 p-4 mt-2">
+            <div
+                class="flex min-w-[158px] flex-1 flex-col gap-3 rounded-lg p-6 bg-slate-100 dark:bg-slate-900/50 border-b-4 border-primary/50 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <span class="material-symbols-outlined text-6xl">group</span>
+                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider">Total Visitors
+                </p>
+                <div class="flex items-baseline gap-2">
+                    <p class="text-slate-900 dark:text-slate-100 tracking-tight text-3xl font-bold leading-tight neon-glow-blue"
+                        id="stat-visitors">--</p>
+                    <p class="text-primary text-sm font-bold leading-normal" id="stat-growth">--%</p>
+                </div>
+                <div class="w-full bg-slate-800 h-1 mt-2">
+                    <div class="bg-primary h-full" id="bar-visitors" style="width:0%"></div>
+                </div>
+            </div>
+            <div
+                class="flex min-w-[158px] flex-1 flex-col gap-3 rounded-lg p-6 bg-slate-100 dark:bg-slate-900/50 border-b-4 border-secondary/50 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <span class="material-symbols-outlined text-6xl">inventory_2</span>
+                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider">Total Products
+                </p>
+                <div class="flex items-baseline gap-2">
+                    <p class="text-slate-900 dark:text-slate-100 tracking-tight text-3xl font-bold leading-tight neon-glow-purple"
+                        id="stat-products">--</p>
+                    <p class="text-secondary text-sm font-bold leading-normal">active</p>
+                </div>
+                <div class="w-full bg-slate-800 h-1 mt-2">
+                    <div class="bg-secondary h-full" id="bar-products" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="px-4 pb-3 pt-5">
+            <h2
+                class="text-slate-900 dark:text-slate-100 text-[22px] font-bold leading-tight tracking-tight uppercase border-l-4 border-primary pl-3">
+                Network Traffic</h2>
+        </div>
+        <div class="flex flex-wrap gap-4 px-4 py-4">
+            <div
+                class="flex min-w-72 flex-1 flex-col gap-2 bg-slate-100 dark:bg-slate-900/30 p-6 rounded-xl border border-primary/10">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase">Performance Overview
+                        </p>
+                        <p class="text-slate-900 dark:text-slate-100 tracking-tight text-[32px] font-bold leading-tight truncate"
+                            id="stat-weekly">-- <span class="text-sm font-normal text-slate-500">visits this week</span>
+                        </p>
+                    </div>
+                    <div class="bg-primary/10 px-3 py-1 rounded border border-primary/20">
+                        <p class="text-primary text-xs font-bold uppercase">Live</p>
+                    </div>
+                </div>
+                <div class="flex min-h-[180px] flex-1 flex-col gap-8 py-4">
+                    <svg id="traffic-chart" fill="none" height="148" preserveAspectRatio="none" viewBox="-3 0 478 150"
+                        width="100%" xmlns="http://www.w3.org/2000/svg">
+                        <path id="chart-fill" d="M0 149H472V149H0Z" fill="url(#paint0_linear)"></path>
+                        <path id="chart-line" d="M0 149" stroke="#0df2f2" stroke-linecap="round" stroke-width="3">
+                        </path>
+                        <defs>
+                            <linearGradient id="paint0_linear" gradientUnits="userSpaceOnUse" x1="236" x2="236" y1="1"
+                                y2="149">
+                                <stop stop-color="#0df2f2" stop-opacity="0.3"></stop>
+                                <stop offset="1" stop-color="#0df2f2" stop-opacity="0"></stop>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="flex justify-between px-2" id="chart-labels"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Hub -->
+        <div class="px-4 py-6">
+            <h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold uppercase mb-4 tracking-wider">Management
+                Hub</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a class="flex flex-col items-center gap-3 p-6 rounded-xl bg-slate-100 dark:bg-slate-900/50 border border-primary/20 hover:border-primary transition-all group"
+                    href="/">
+                    <div
+                        class="size-12 rounded bg-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background-dark transition-colors">
+                        <span class="material-symbols-outlined">web</span>
+                    </div>
+                    <span class="text-xs font-bold uppercase text-center">Landing Page</span>
+                </a>
+                <a class="flex flex-col items-center gap-3 p-6 rounded-xl bg-slate-100 dark:bg-slate-900/50 border border-secondary/20 hover:border-secondary transition-all group"
+                    href="/admin/store">
+                    <div
+                        class="size-12 rounded bg-secondary/20 flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                    </div>
+                    <span class="text-xs font-bold uppercase text-center">Store Management</span>
+                </a>
+                <a class="flex flex-col items-center gap-3 p-6 rounded-xl bg-slate-100 dark:bg-slate-900/50 border border-slate-700/50 hover:border-slate-400 transition-all group"
+                    href="/admin/profile">
+                    <div
+                        class="size-12 rounded bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-slate-100 transition-colors">
+                        <span class="material-symbols-outlined">manage_accounts</span>
+                    </div>
+                    <span class="text-xs font-bold uppercase text-center">Profile Edit</span>
+                </a>
+                <a class="flex flex-col items-center gap-3 p-6 rounded-xl bg-slate-100 dark:bg-slate-900/50 border border-primary/20 hover:border-primary transition-all group"
+                    href="/">
+                    <div
+                        class="size-12 rounded bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background-dark transition-colors">
+                        <span class="material-symbols-outlined">link</span>
+                    </div>
+                    <span class="text-xs font-bold uppercase text-center">Preview Site</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="h-20 md:h-24"></div>
+
+        <!-- Bottom Navigation -->
+        <div class="fixed bottom-0 left-0 right-0 z-20 flex flex-col">
+            <div
+                class="flex justify-around items-center h-20 px-4 border-t-4 border-primary/30 bg-background-dark/95 backdrop-blur-md">
+                <a class="flex flex-1 flex-col items-center justify-center transition-all hover:scale-110 text-primary"
+                    href="/admin/dashboard">
+                    <span class="material-symbols-outlined text-3xl"
+                        style="font-variation-settings: 'FILL' 1">home</span>
+                </a>
+                <a class="flex flex-1 flex-col items-center justify-center transition-all text-primary/40 hover:text-primary/80"
+                    href="/admin/store">
+                    <span class="material-symbols-outlined text-3xl">sports_esports</span>
+                </a>
+                <a class="relative -top-6 flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-secondary border-4 border-black shadow-[4px_4px_0px_0px_#000] transform rotate-45 active:scale-95 transition-all group"
+                    href="/admin/store">
+                    <span
+                        class="material-symbols-outlined text-background-dark font-bold text-4xl transform -rotate-45">add</span>
+                </a>
+                <a class="flex flex-1 flex-col items-center justify-center transition-all text-primary/40 hover:text-primary/80"
+                    href="/daily">
+                    <span class="material-symbols-outlined text-3xl">palette</span>
+                </a>
+                <a class="flex flex-1 flex-col items-center justify-center transition-all text-primary/40 hover:text-primary/80"
+                    href="/admin/profile">
+                    <span class="material-symbols-outlined text-3xl">person</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Auth guard
+        if (!API.isAuthenticated()) {
+            window.location.href = '/admin/login';
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const stats = await API.get('/api/analytics/stats');
+
+                document.getElementById('stat-visitors').textContent = formatNumber(stats.totalVisits);
+                document.getElementById('stat-growth').textContent = `+${stats.visitGrowth}%`;
+                document.getElementById('stat-products').textContent = stats.totalProducts;
+                document.getElementById('stat-weekly').innerHTML = `${formatNumber(stats.weekVisits)} <span class="text-sm font-normal text-slate-500">visits this week</span>`;
+
+                // Progress bars
+                document.getElementById('bar-visitors').style.width = Math.min((stats.weekVisits / Math.max(stats.totalVisits, 1)) * 100, 100) + '%';
+                document.getElementById('bar-products').style.width = Math.min((stats.totalProducts / 200) * 100, 100) + '%';
+
+                // Draw chart
+                drawChart(stats.weeklyTraffic);
+
+            } catch (err) {
+                console.error('Failed to load stats:', err);
+                if (err.message.includes('401') || err.message.includes('Access denied')) {
+                    window.location.href = '/admin/login';
+                }
+            }
+        });
+
+        function formatNumber(n) {
+            if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+            return n.toString();
+        }
+
+        function drawChart(data) {
+            if (!data || data.length === 0) return;
+
+            const labels = document.getElementById('chart-labels');
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            // Ensure 7 days
+            const today = new Date();
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                const found = data.find(item => item.date === dateStr);
+                days.push({ date: dateStr, count: found ? found.count : 0, dayName: dayNames[d.getDay()] });
+            }
+
+            const maxCount = Math.max(...days.map(d => d.count), 1);
+            const width = 472;
+            const height = 149;
+            const segWidth = width / (days.length - 1 || 1);
+
+            // Labels
+            labels.innerHTML = '';
+            days.forEach((day, i) => {
+                const isToday = i === days.length - 1;
+                const p = document.createElement('p');
+                p.className = `text-slate-500 text-xs font-bold uppercase ${isToday ? 'text-primary' : ''}`;
+                p.textContent = day.dayName;
+                labels.appendChild(p);
+            });
+
+            // Chart paths
+            const points = days.map((day, i) => {
+                const x = i * segWidth;
+                const y = height - (day.count / maxCount) * (height - 10) - 5;
+                return { x, y };
+            });
+
+            let linePath = `M${points[0].x} ${points[0].y}`;
+            let fillPath = `M${points[0].x} ${points[0].y}`;
+
+            for (let i = 1; i < points.length; i++) {
+                const cx = (points[i - 1].x + points[i].x) / 2;
+                linePath += `C${cx} ${points[i - 1].y} ${cx} ${points[i].y} ${points[i].x} ${points[i].y}`;
+                fillPath += `C${cx} ${points[i - 1].y} ${cx} ${points[i].y} ${points[i].x} ${points[i].y}`;
+            }
+
+            fillPath += `V${height}H${points[0].x}Z`;
+
+            document.getElementById('chart-line').setAttribute('d', linePath);
+            document.getElementById('chart-fill').setAttribute('d', fillPath);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Daily Info & Theme | maxs1el</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#0df2f2", "background-light": "#f5f8f8", "background-dark": "#102222", "accent-purple": "#a855f7", "accent-green": "#22c55e", "accent-pink": "#ec4899", "surface-dark": "#183434", "muted-teal": "#90cbcb" },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+    <header class="flex items-center bg-background-light dark:bg-background-dark p-4 border-b border-muted-teal/10">
+        <div class="flex size-12 shrink-0 items-center justify-start">
+            <span class="material-symbols-outlined text-slate-900 dark:text-slate-100 cursor-pointer"
+                onclick="history.back()">arrow_back</span>
+        </div>
+        <h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center">Daily Info & Theme</h1>
+        <div class="flex w-12 items-center justify-end">
+            <button class="flex items-center justify-center p-2 rounded-lg bg-primary/10 text-primary">
+                <span class="material-symbols-outlined">palette</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto pb-24">
+        <!-- Daily Quote -->
+        <section class="p-4">
+            <h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight mb-4">Daily
+                Motivation</h3>
+            <div
+                class="flex flex-col items-stretch justify-start rounded-xl overflow-hidden shadow-lg bg-background-light dark:bg-surface-dark border border-muted-teal/10">
+                <div class="w-full bg-center bg-no-repeat aspect-video bg-cover relative"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCAkrZs6pNhkKwSJIpSIQ-s67fkKPk39AqM8_KpIoIDg_L2VrN-G3IN14bRlxy4MKUtg21kmMEH-Ql8--u09i8yWgMwcSf0aSKHfu9fH-nS5m_T9ZYxba5zYUHVwHFtMqujKfUcvvW09kJ0djOMuo2LxWCPyBFYlSrgRuj6_mkmyATRFtFF8nQ-PyAALHzls8-S6nlwkplaZybXwraqWbjFtVRxR_WvyI0kaAHnzmcouvHAfM9scog_UHW53nM5zrlddN3s4IqeMa0");'>
+                    <div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent"></div>
+                </div>
+                <div class="flex w-full flex-col items-stretch justify-center gap-4 p-5">
+                    <p class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-snug" id="quote-text">
+                        "Loading quote..."</p>
+                    <div class="flex items-center gap-3 justify-between">
+                        <p class="text-muted-teal text-sm font-normal" id="quote-author">Stay inspired and keep refining
+                            your craft today.</p>
+                        <button
+                            class="flex shrink-0 cursor-pointer items-center justify-center rounded-lg h-10 px-6 bg-primary text-background-dark text-sm font-bold transition-transform active:scale-95"
+                            onclick="shareQuote()">
+                            Share Quote
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Theme Switcher -->
+        <section class="p-4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight">Theme
+                    Switcher</h3>
+                <span class="text-xs font-medium text-muted-teal uppercase tracking-widest">Select Vibe</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4" id="theme-grid">
+                <button
+                    class="theme-btn flex flex-col items-center gap-3 p-4 rounded-xl bg-background-light dark:bg-surface-dark border-2 border-primary shadow-lg transition-all"
+                    data-theme="cyan" onclick="switchTheme('cyan', this)">
+                    <div
+                        class="size-12 rounded-full bg-[#0df2f2] shadow-[0_0_15px_rgba(13,242,242,0.4)] flex items-center justify-center">
+                        <span class="material-symbols-outlined text-background-dark theme-check">check</span>
+                    </div>
+                    <span class="text-sm font-bold text-primary">Cyan Neon</span>
+                </button>
+                <button
+                    class="theme-btn flex flex-col items-center gap-3 p-4 rounded-xl bg-background-light dark:bg-surface-dark border-2 border-transparent hover:border-accent-purple/50 transition-all"
+                    data-theme="purple" onclick="switchTheme('purple', this)">
+                    <div class="size-12 rounded-full bg-accent-purple shadow-[0_0_10px_rgba(168,85,247,0.3)]"></div>
+                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400">Cyber Purple</span>
+                </button>
+                <button
+                    class="theme-btn flex flex-col items-center gap-3 p-4 rounded-xl bg-background-light dark:bg-surface-dark border-2 border-transparent hover:border-accent-green/50 transition-all"
+                    data-theme="green" onclick="switchTheme('green', this)">
+                    <div class="size-12 rounded-full bg-accent-green shadow-[0_0_10px_rgba(34,197,94,0.3)]"></div>
+                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400">Matrix Green</span>
+                </button>
+                <button
+                    class="theme-btn flex flex-col items-center gap-3 p-4 rounded-xl bg-background-light dark:bg-surface-dark border-2 border-transparent hover:border-accent-pink/50 transition-all"
+                    data-theme="pink" onclick="switchTheme('pink', this)">
+                    <div class="size-12 rounded-full bg-accent-pink shadow-[0_0_10px_rgba(236,72,153,0.3)]"></div>
+                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400">Vapor Pink</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="px-4 py-2">
+            <div class="p-4 rounded-xl bg-primary/5 border border-primary/20">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="material-symbols-outlined text-primary">info</span>
+                    <h4 class="font-bold text-primary">Theme Tip</h4>
+                </div>
+                <p class="text-sm text-muted-teal leading-relaxed">
+                    Changing the primary color will update all buttons, icons, and accent elements. Your choice is saved
+                    locally.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Nav -->
+    <nav
+        class="fixed bottom-0 w-full border-t border-muted-teal/10 bg-background-light dark:bg-surface-dark px-4 pb-6 pt-2 z-50">
+        <div class="flex items-center justify-around max-w-md mx-auto">
+            <a class="flex flex-col items-center gap-1 text-muted-teal" href="/"><span
+                    class="material-symbols-outlined">home</span>
+                <p class="text-xs font-medium tracking-wide">Home</p>
+            </a>
+            <a class="flex flex-col items-center gap-1 text-muted-teal" href="/store"><span
+                    class="material-symbols-outlined">sports_esports</span>
+                <p class="text-xs font-medium tracking-wide">Games</p>
+            </a>
+            <a class="flex flex-col items-center gap-1 text-primary" href="/daily"><span
+                    class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">palette</span>
+                <p class="text-xs font-medium tracking-wide">Themes</p>
+            </a>
+            <a class="flex flex-col items-center gap-1 text-muted-teal" href="/profile"><span
+                    class="material-symbols-outlined">person</span>
+                <p class="text-xs font-medium tracking-wide">Profile</p>
+            </a>
+        </div>
+    </nav>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/theme.js"></script>
+    <script>
+        let currentQuote = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load quote
+            try {
+                currentQuote = await API.get('/api/daily-quote');
+                document.getElementById('quote-text').textContent = `"${currentQuote.text}"`;
+                document.getElementById('quote-author').textContent = `— ${currentQuote.author}`;
+            } catch (err) {
+                document.getElementById('quote-text').textContent = '"Keep coding, keep creating."';
+            }
+
+            // Highlight active theme
+            const active = ThemeManager.getCurrentTheme();
+            highlightTheme(active);
+        });
+
+        function switchTheme(key, btn) {
+            ThemeManager.setTheme(key);
+            highlightTheme(key);
+        }
+
+        function highlightTheme(key) {
+            document.querySelectorAll('.theme-btn').forEach(b => {
+                b.classList.remove('border-primary', 'shadow-lg');
+                b.classList.add('border-transparent');
+                const check = b.querySelector('.theme-check');
+                if (check) check.remove();
+                const label = b.querySelector('span:last-child');
+                if (label) { label.classList.remove('text-primary'); label.classList.add('text-slate-400'); }
+            });
+
+            const active = document.querySelector(`.theme-btn[data-theme="${key}"]`);
+            if (active) {
+                active.classList.remove('border-transparent');
+                active.classList.add('border-primary', 'shadow-lg');
+                const circle = active.querySelector('.rounded-full');
+                if (circle && !circle.querySelector('.theme-check')) {
+                    const check = document.createElement('span');
+                    check.className = 'material-symbols-outlined text-background-dark theme-check';
+                    check.textContent = 'check';
+                    circle.classList.add('flex', 'items-center', 'justify-center');
+                    circle.appendChild(check);
+                }
+                const label = active.querySelector('span:last-child');
+                if (label) { label.classList.remove('text-slate-400'); label.classList.add('text-primary'); }
+            }
+        }
+
+        function shareQuote() {
+            const text = currentQuote ? `"${currentQuote.text}" — ${currentQuote.author}` : '';
+            if (navigator.share) {
+                navigator.share({ title: 'Daily Quote', text });
+            } else {
+                navigator.clipboard.writeText(text);
+                alert('Quote copied!');
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Edit Profile | maxs1el Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#0df2f2", "background-light": "#f5f8f8", "background-dark": "#102222" },
+                    fontFamily: { "display": ["Space Grotesk"] },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .pixel-border {
+            box-shadow: 0 -4px 0 0 #0df2f2, 0 4px 0 0 #0df2f2, -4px 0 0 0 #0df2f2, 4px 0 0 0 #0df2f2;
+        }
+
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(13, 242, 242, 0.4);
+        }
+
+        .neon-glow:hover {
+            box-shadow: 0 0 25px rgba(13, 242, 242, 0.6);
+        }
+
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+    <header
+        class="flex items-center bg-background-light dark:bg-background-dark p-4 border-b border-primary/20 sticky top-0 z-10">
+        <a href="/admin/dashboard" class="text-primary hover:bg-primary/10 p-2 rounded-lg transition-colors">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h1 class="text-xl font-bold tracking-tight ml-2 uppercase italic">Admin Settings</h1>
+        <div class="ml-auto">
+            <span
+                class="bg-primary/10 text-primary px-3 py-1 rounded text-xs font-bold uppercase tracking-widest border border-primary/30">System
+                v2.4</span>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-md mx-auto w-full p-6 space-y-8 pb-24">
+        <!-- Avatar Section -->
+        <section class="flex flex-col items-center gap-6">
+            <div class="relative group cursor-pointer" onclick="document.getElementById('avatar-input').click()">
+                <div class="w-32 h-32 bg-primary/10 pixel-border overflow-hidden relative">
+                    <img id="profile-avatar" alt="Admin avatar" class="w-full h-full object-cover"
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" />
+                    <div
+                        class="absolute inset-0 bg-background-dark/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                        <span class="material-symbols-outlined text-primary text-3xl">upload</span>
+                    </div>
+                </div>
+                <div class="absolute -bottom-2 -right-2 bg-primary text-background-dark p-1 rounded-sm">
+                    <span class="material-symbols-outlined text-sm font-bold">edit</span>
+                </div>
+                <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="uploadAvatar(this)" />
+            </div>
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-primary tracking-tighter uppercase" id="display-name">maxs1el</h2>
+                <p class="text-primary/60 text-sm font-medium tracking-[0.2em] uppercase">Security Administrator</p>
+            </div>
+        </section>
+
+        <!-- Edit Fields -->
+        <section class="space-y-6">
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-primary uppercase tracking-widest ml-1">Identity Tag</label>
+                <div class="relative">
+                    <input id="f-name"
+                        class="w-full bg-primary/5 border-2 border-primary/20 focus:border-primary text-slate-100 p-4 rounded-none outline-none transition-colors"
+                        placeholder="Enter display name..." type="text" />
+                    <span
+                        class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40">fingerprint</span>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-primary uppercase tracking-widest ml-1">Title</label>
+                <input id="f-title"
+                    class="w-full bg-primary/5 border-2 border-primary/20 focus:border-primary text-slate-100 p-4 rounded-none outline-none transition-colors"
+                    placeholder="Your title..." type="text" />
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-primary uppercase tracking-widest ml-1">Subtitle</label>
+                <input id="f-subtitle"
+                    class="w-full bg-primary/5 border-2 border-primary/20 focus:border-primary text-slate-100 p-4 rounded-none outline-none transition-colors"
+                    placeholder="Subtitle..." type="text" />
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-primary uppercase tracking-widest ml-1">Neural Bio</label>
+                <div class="relative">
+                    <textarea id="f-bio"
+                        class="w-full bg-primary/5 border-2 border-primary/20 focus:border-primary text-slate-100 p-4 rounded-none outline-none min-h-[120px] resize-none"
+                        placeholder="Describe your digital entity..."></textarea>
+                    <span class="material-symbols-outlined absolute right-4 bottom-4 text-primary/40">terminal</span>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-primary uppercase tracking-widest ml-1">Badge Text</label>
+                <input id="f-badge"
+                    class="w-full bg-primary/5 border-2 border-primary/20 focus:border-primary text-slate-100 p-4 rounded-none outline-none transition-colors"
+                    placeholder="Level 42 Explorer" type="text" />
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-primary uppercase tracking-widest ml-1">Since</label>
+                <input id="f-since"
+                    class="w-full bg-primary/5 border-2 border-primary/20 focus:border-primary text-slate-100 p-4 rounded-none outline-none transition-colors"
+                    placeholder="Content Creator since 2021" type="text" />
+            </div>
+
+            <!-- Skills Editor -->
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-primary uppercase tracking-widest ml-1">Skills</label>
+                <div id="skills-editor" class="space-y-2"></div>
+                <button type="button" onclick="addSkillField()"
+                    class="text-primary text-xs font-bold uppercase flex items-center gap-1 hover:underline">
+                    <span class="material-symbols-outlined text-sm">add</span> Add Skill
+                </button>
+            </div>
+
+            <!-- Hobbies Editor -->
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-primary uppercase tracking-widest ml-1">Hobbies</label>
+                <div id="hobbies-editor" class="space-y-2"></div>
+                <button type="button" onclick="addHobbyField()"
+                    class="text-primary text-xs font-bold uppercase flex items-center gap-1 hover:underline">
+                    <span class="material-symbols-outlined text-sm">add</span> Add Hobby
+                </button>
+            </div>
+
+            <div class="p-4 bg-primary/5 border-l-4 border-primary">
+                <div class="flex gap-3">
+                    <span class="material-symbols-outlined text-primary">info</span>
+                    <p class="text-xs text-primary/80 leading-relaxed">Changes will be reflected on the public profile
+                        page immediately.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="pt-4">
+            <button onclick="saveProfile()" id="save-btn"
+                class="w-full bg-primary text-background-dark font-bold py-4 rounded-none uppercase tracking-[0.3em] neon-glow active:scale-95 transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">save</span>
+                <span id="save-btn-text">Upload Changes</span>
+            </button>
+            <button onclick="loadProfile()"
+                class="w-full mt-4 bg-transparent text-primary/50 font-bold py-2 uppercase text-xs tracking-widest hover:text-primary transition-colors">
+                Discard Updates
+            </button>
+        </section>
+    </main>
+
+    <!-- Bottom Nav -->
+    <div class="fixed bottom-0 left-0 right-0 z-20 flex flex-col">
+        <div
+            class="flex justify-around items-center h-20 px-4 border-t-4 border-primary/30 bg-background-dark/95 backdrop-blur-md">
+            <a class="flex flex-1 flex-col items-center justify-center transition-all hover:scale-110 text-primary/40 hover:text-primary"
+                href="/admin/dashboard"><span class="material-symbols-outlined text-3xl">home</span></a>
+            <a class="flex flex-1 flex-col items-center justify-center transition-all text-primary/40 hover:text-primary/80"
+                href="/admin/store"><span class="material-symbols-outlined text-3xl">sports_esports</span></a>
+            <a class="relative -top-6 flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-secondary border-4 border-black shadow-[4px_4px_0px_0px_#000] transform rotate-45 active:scale-95 transition-all group"
+                href="/admin/store">
+                <span
+                    class="material-symbols-outlined text-background-dark font-bold text-4xl transform -rotate-45">add</span>
+            </a>
+            <a class="flex flex-1 flex-col items-center justify-center transition-all text-primary/40 hover:text-primary/80"
+                href="/daily"><span class="material-symbols-outlined text-3xl">palette</span></a>
+            <a class="flex flex-1 flex-col items-center justify-center transition-all text-primary"
+                href="/admin/profile"><span class="material-symbols-outlined text-3xl"
+                    style="font-variation-settings: 'FILL' 1">person</span></a>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        if (!API.isAuthenticated()) window.location.href = '/admin/login';
+
+        document.addEventListener('DOMContentLoaded', loadProfile);
+
+        async function loadProfile() {
+            try {
+                const profile = await API.get('/api/profile');
+
+                document.getElementById('f-name').value = profile.name || '';
+                document.getElementById('f-title').value = profile.title || '';
+                document.getElementById('f-subtitle').value = profile.subtitle || '';
+                document.getElementById('f-bio').value = profile.bio || '';
+                document.getElementById('f-badge').value = profile.badge_text || '';
+                document.getElementById('f-since').value = profile.created_since || '';
+                document.getElementById('display-name').textContent = profile.name || 'maxs1el';
+
+                if (profile.avatar && !profile.avatar.includes('default')) {
+                    document.getElementById('profile-avatar').src = profile.avatar;
+                } else {
+                    document.getElementById('profile-avatar').src = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBy1n-_4P_8hy_r0D12q99KT6cHMjXKOvvpB4bmGMDIqkICPrdq125jAqGzOmc0ObtJ1nWUlryZMjO67hEjEBW38A38tJCDLoLAFxEXXHt-txcIQDz4UBKiia9PAKwbdseNjrsmb9Tnfu5Oj_mU3vOgdUkEkJY1R05mvTWlq2k8sttGTIs297kcqxz-27CLRRx1wwfdlJ1lLHg9E5v5X70Zk1O5s_6awtthOOM6Vbhmhj1_woDv7Sd9DyYLYZaYonND9uwD396Cysg';
+                }
+
+                // Skills
+                const skillsEditor = document.getElementById('skills-editor');
+                skillsEditor.innerHTML = '';
+                (profile.skills || []).forEach(skill => addSkillField(skill.name, skill.level));
+
+                // Hobbies
+                const hobbiesEditor = document.getElementById('hobbies-editor');
+                hobbiesEditor.innerHTML = '';
+                (profile.hobbies || []).forEach(hobby => addHobbyField(hobby.name));
+
+            } catch (err) {
+                console.error('Failed to load profile:', err);
+            }
+        }
+
+        function addSkillField(name = '', level = 'Pro') {
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 items-center';
+            div.innerHTML = `
+        <input class="flex-1 bg-primary/5 border-2 border-primary/20 focus:border-primary text-slate-100 p-3 rounded-none text-sm skill-name" value="${name}" placeholder="Skill name"/>
+        <select class="w-24 bg-primary/5 border-2 border-primary/20 focus:border-primary text-slate-100 p-3 rounded-none text-sm skill-level">
+          <option ${level === 'Master' ? 'selected' : ''}>Master</option>
+          <option ${level === 'Pro' ? 'selected' : ''}>Pro</option>
+          <option ${level === 'Mid' ? 'selected' : ''}>Mid</option>
+          <option ${level === 'Junior' ? 'selected' : ''}>Junior</option>
+        </select>
+        <button type="button" onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-300">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      `;
+            document.getElementById('skills-editor').appendChild(div);
+        }
+
+        function addHobbyField(name = '') {
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 items-center';
+            div.innerHTML = `
+        <input class="flex-1 bg-primary/5 border-2 border-primary/20 focus:border-primary text-slate-100 p-3 rounded-none text-sm hobby-name" value="${name}" placeholder="Hobby name"/>
+        <button type="button" onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-300">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      `;
+            document.getElementById('hobbies-editor').appendChild(div);
+        }
+
+        async function uploadAvatar(input) {
+            if (!input.files[0]) return;
+            const formData = new FormData();
+            formData.append('avatar', input.files[0]);
+
+            try {
+                const result = await API.post('/api/profile/avatar', formData);
+                if (result.success) {
+                    document.getElementById('profile-avatar').src = result.avatar + '?t=' + Date.now();
+                }
+            } catch (err) {
+                alert('Failed to upload avatar: ' + err.message);
+            }
+        }
+
+        async function saveProfile() {
+            const btn = document.getElementById('save-btn');
+            const btnText = document.getElementById('save-btn-text');
+            btn.disabled = true;
+            btnText.textContent = 'Saving...';
+
+            try {
+                const skills = [];
+                document.querySelectorAll('#skills-editor > div').forEach(div => {
+                    const name = div.querySelector('.skill-name').value.trim();
+                    const level = div.querySelector('.skill-level').value;
+                    if (name) skills.push({ name, level });
+                });
+
+                const hobbies = [];
+                document.querySelectorAll('#hobbies-editor > div').forEach(div => {
+                    const name = div.querySelector('.hobby-name').value.trim();
+                    if (name) hobbies.push(name);
+                });
+
+                await API.put('/api/profile', {
+                    name: document.getElementById('f-name').value,
+                    title: document.getElementById('f-title').value,
+                    subtitle: document.getElementById('f-subtitle').value,
+                    bio: document.getElementById('f-bio').value,
+                    badge_text: document.getElementById('f-badge').value,
+                    created_since: document.getElementById('f-since').value,
+                    skills,
+                    hobbies
+                });
+
+                btnText.textContent = 'Saved! ✓';
+                setTimeout(() => { btnText.textContent = 'Upload Changes'; }, 2000);
+            } catch (err) {
+                alert('Failed to save: ' + err.message);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

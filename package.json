@@ -1,0 +1,28 @@
+{
+  "name": "maxs1el-lynkmax",
+  "version": "1.0.0",
+  "description": "maxs1el Premium App Store & Link Hub",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "linktree",
+    "premium-apps",
+    "store"
+  ],
+  "author": "maxs1el",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.6.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.1.0",
+    "node-fetch": "^2.7.0"
+  }
+}

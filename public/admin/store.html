@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Store Management | maxs1el</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#0df2f2", "accent": "#bf00ff", "background-light": "#f5f8f8", "background-dark": "#0a0f0f", "card-dark": "#161d1d" },
+                    fontFamily: { "display": ["Space Grotesk"] },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .neon-glow-cyan {
+            box-shadow: 0 0 15px rgba(13, 242, 242, 0.4);
+        }
+
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen pb-24">
+    <!-- Header -->
+    <header
+        class="border-b border-primary/20 bg-background-light dark:bg-card-dark/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center justify-between p-4 max-w-2xl mx-auto">
+            <div class="flex items-center gap-3">
+                <div class="text-primary bg-primary/10 p-2 rounded-lg"><span
+                        class="material-symbols-outlined text-3xl">storefront</span></div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100 uppercase">maxs1el
+                        <span class="text-primary">Store</span></h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">STORE MANAGEMENT</p>
+                </div>
+            </div>
+            <a href="/admin/dashboard"
+                class="bg-accent/10 text-accent p-2 rounded-xl hover:bg-accent/20 transition-colors">
+                <span class="material-symbols-outlined">dashboard</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto p-4 space-y-8">
+        <!-- Add New Product -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">add_box</span> CRAFT NEW ITEM
+                </h2>
+            </div>
+            <form id="product-form"
+                class="bg-white dark:bg-card-dark border-2 border-primary/30 rounded-xl p-6 space-y-6 neon-glow-cyan"
+                onsubmit="addProduct(event)">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Image Upload -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Item Preview</label>
+                        <label for="product-image"
+                            class="aspect-square w-full bg-slate-100 dark:bg-slate-800 border-2 border-dashed border-primary/50 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-primary/5 transition-colors group">
+                            <img id="image-preview" class="hidden w-full h-full object-cover rounded-xl" />
+                            <div id="image-placeholder" class="flex flex-col items-center">
+                                <span
+                                    class="material-symbols-outlined text-4xl text-primary/40 group-hover:scale-110 transition-transform">upload_file</span>
+                                <span class="text-xs mt-2 font-bold text-primary/60">UPLOAD IMAGE</span>
+                            </div>
+                            <input type="file" id="product-image" accept="image/*" class="hidden"
+                                onchange="previewImage(this)" />
+                        </label>
+                    </div>
+                    <!-- Fields -->
+                    <div class="space-y-4">
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Product
+                                Name</label>
+                            <input id="p-name"
+                                class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-slate-100"
+                                placeholder="e.g. Netflix Premium" type="text" required />
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Price ($)</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-primary font-bold">$</span>
+                                <input id="p-price"
+                                    class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg pl-8 focus:ring-primary focus:border-primary text-slate-100"
+                                    placeholder="0.00" type="number" step="0.01" required />
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Category</label>
+                            <select id="p-category"
+                                class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-slate-100">
+                                <option>Streaming</option>
+                                <option>Music</option>
+                                <option>Video</option>
+                                <option>Gaming</option>
+                                <option>General</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Stock</label>
+                            <input id="p-stock"
+                                class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-slate-100"
+                                placeholder="0" type="number" value="100" />
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Description</label>
+                            <textarea id="p-desc"
+                                class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-slate-100 min-h-[80px]"
+                                placeholder="Product description..."></textarea>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Features (pipe
+                                separated)</label>
+                            <input id="p-features"
+                                class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-slate-100"
+                                placeholder="4K|HDR|Multi Screen" type="text" />
+                        </div>
+                        <div class="pt-4">
+                            <button type="submit" id="add-btn"
+                                class="w-full bg-primary text-background-dark font-bold py-3 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 transition-all uppercase tracking-widest shadow-[0_4px_0_0_#06b6b6]">
+                                <span class="material-symbols-outlined">bolt</span>
+                                <span id="add-btn-text">List Product</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Inventory List -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold flex items-center gap-2">
+                    <span class="material-symbols-outlined text-accent">inventory_2</span> CURRENT INVENTORY
+                </h2>
+                <span class="text-xs font-bold bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full text-slate-400"
+                    id="product-count">-- ITEMS</span>
+            </div>
+            <div class="space-y-3" id="inventory-list">
+                <div class="skeleton h-20 rounded-xl"></div>
+                <div class="skeleton h-20 rounded-xl"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Nav -->
+    <div class="fixed bottom-0 left-0 right-0 z-20 flex flex-col">
+        <div
+            class="flex justify-around items-center h-20 px-4 border-t-4 border-primary/30 bg-background-dark/95 backdrop-blur-md">
+            <a class="flex flex-1 flex-col items-center justify-center transition-all hover:scale-110 text-primary/40 hover:text-primary"
+                href="/admin/dashboard"><span class="material-symbols-outlined text-3xl">home</span></a>
+            <a class="flex flex-1 flex-col items-center justify-center transition-all text-primary"
+                href="/admin/store"><span class="material-symbols-outlined text-3xl"
+                    style="font-variation-settings: 'FILL' 1">sports_esports</span></a>
+            <a class="relative -top-6 flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-accent border-4 border-black shadow-[4px_4px_0px_0px_#000] transform rotate-45 active:scale-95 transition-all group"
+                href="#" onclick="document.getElementById('p-name').focus()">
+                <span
+                    class="material-symbols-outlined text-background-dark font-bold text-4xl transform -rotate-45">add</span>
+            </a>
+            <a class="flex flex-1 flex-col items-center justify-center transition-all text-primary/40 hover:text-primary/80"
+                href="/daily"><span class="material-symbols-outlined text-3xl">palette</span></a>
+            <a class="flex flex-1 flex-col items-center justify-center transition-all text-primary/40 hover:text-primary/80"
+                href="/admin/profile"><span class="material-symbols-outlined text-3xl">person</span></a>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <style>
+        .skeleton {
+            background: linear-gradient(90deg, #161d1d 25%, #1a2e2e 50%, #161d1d 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+    </style>
+    <script>
+        if (!API.isAuthenticated()) window.location.href = '/admin/login';
+
+        let editingId = null;
+
+        document.addEventListener('DOMContentLoaded', loadProducts);
+
+        async function loadProducts() {
+            try {
+                const products = await API.get('/api/products');
+                document.getElementById('product-count').textContent = `${products.length} ITEMS ACTIVE`;
+
+                const list = document.getElementById('inventory-list');
+                list.innerHTML = '';
+
+                products.forEach(p => {
+                    const card = document.createElement('div');
+                    card.className = 'group bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center gap-4 hover:border-primary/50 transition-all';
+                    card.innerHTML = `
+            <div class="h-16 w-16 bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden flex-shrink-0 border border-slate-700">
+              ${p.image ? `<img class="h-full w-full object-cover" src="${p.image}" alt="${p.name}"/>` : '<div class="h-full w-full flex items-center justify-center"><span class="material-symbols-outlined text-slate-600">image</span></div>'}
+            </div>
+            <div class="flex-grow">
+              <h3 class="font-bold text-slate-900 dark:text-slate-100">${p.name}</h3>
+              <p class="text-primary font-bold">$${p.price.toFixed(2)} <span class="text-[10px] opacity-70 uppercase">• Stock: ${p.stock}</span></p>
+            </div>
+            <div class="flex gap-2">
+              <button class="h-10 w-10 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-primary transition-colors" onclick="editProduct(${p.id})">
+                <span class="material-symbols-outlined text-xl">edit</span>
+              </button>
+              <button class="h-10 w-10 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-red-500 transition-colors" onclick="deleteProduct(${p.id}, '${p.name.replace(/'/g, "\\'")}')">
+                <span class="material-symbols-outlined text-xl">delete</span>
+              </button>
+            </div>
+          `;
+                    list.appendChild(card);
+                });
+            } catch (err) {
+                console.error('Failed to load products:', err);
+            }
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = document.getElementById('image-preview');
+                    const placeholder = document.getElementById('image-placeholder');
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function addProduct(e) {
+            e.preventDefault();
+            const btn = document.getElementById('add-btn');
+            const btnText = document.getElementById('add-btn-text');
+            btn.disabled = true;
+            btnText.textContent = 'Saving...';
+
+            try {
+                const formData = new FormData();
+                formData.append('name', document.getElementById('p-name').value);
+                formData.append('price', document.getElementById('p-price').value);
+                formData.append('category', document.getElementById('p-category').value);
+                formData.append('stock', document.getElementById('p-stock').value);
+                formData.append('description', document.getElementById('p-desc').value);
+                formData.append('features', document.getElementById('p-features').value);
+
+                const imageInput = document.getElementById('product-image');
+                if (imageInput.files[0]) {
+                    formData.append('image', imageInput.files[0]);
+                }
+
+                if (editingId) {
+                    await API.put(`/api/products/${editingId}`, formData);
+                    editingId = null;
+                } else {
+                    await API.post('/api/products', formData);
+                }
+
+                // Reset form
+                document.getElementById('product-form').reset();
+                document.getElementById('image-preview').classList.add('hidden');
+                document.getElementById('image-placeholder').classList.remove('hidden');
+                btnText.textContent = 'List Product';
+
+                loadProducts();
+            } catch (err) {
+                alert('Failed to save product: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = editingId ? 'Update Product' : 'List Product';
+            }
+        }
+
+        async function editProduct(id) {
+            try {
+                const product = await API.get(`/api/products/${id}`);
+                editingId = id;
+
+                document.getElementById('p-name').value = product.name;
+                document.getElementById('p-price').value = product.price;
+                document.getElementById('p-category').value = product.category;
+                document.getElementById('p-stock').value = product.stock;
+                document.getElementById('p-desc').value = product.description || '';
+                document.getElementById('p-features').value = (product.features || []).join('|');
+                document.getElementById('add-btn-text').textContent = 'Update Product';
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (err) {
+                alert('Failed to load product: ' + err.message);
+            }
+        }
+
+        async function deleteProduct(id, name) {
+            if (!confirm(`Delete "${name}"?`)) return;
+            try {
+                await API.delete(`/api/products/${id}`);
+                loadProducts();
+            } catch (err) {
+                alert('Failed to delete: ' + err.message);
+            }
+        }
+    </script>
+</body>
+
+</html>

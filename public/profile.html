@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Profile | maxs1el</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#0df2f2", "background-light": "#f5f8f8", "background-dark": "#102222" },
+                    fontFamily: { "display": ["Space Grotesk"] },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .pixel-border {
+            box-shadow: 0 -4px 0 0 #0df2f2, 0 4px 0 0 #0df2f2, -4px 0 0 0 #0df2f2, 4px 0 0 0 #0df2f2;
+        }
+
+        .pixel-text {
+            text-shadow: 2px 2px 0px rgba(13, 242, 242, 0.3);
+        }
+
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+    <div
+        class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+        <!-- Header -->
+        <div
+            class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between border-b border-primary/20">
+            <div class="text-primary flex size-10 shrink-0 items-center justify-center" onclick="history.back()"
+                style="cursor:pointer">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </div>
+            <h2
+                class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center uppercase tracking-widest pixel-text">
+                User Profile</h2>
+            <div class="flex w-10 items-center justify-end">
+                <button
+                    class="flex cursor-pointer items-center justify-center rounded h-10 bg-transparent text-primary">
+                    <span class="material-symbols-outlined">more_vert</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="flex p-6">
+            <div class="flex w-full flex-col gap-6 items-center">
+                <div class="flex gap-6 flex-col items-center">
+                    <div class="relative p-1 bg-primary">
+                        <div class="bg-slate-800 bg-center bg-no-repeat aspect-square bg-cover w-32 h-32"
+                            id="profile-avatar"></div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center gap-1">
+                        <p class="text-primary text-2xl font-bold leading-tight tracking-tighter text-center uppercase"
+                            id="profile-name">Loading...</p>
+                        <div class="px-3 py-1 bg-primary/10 border border-primary/30 rounded">
+                            <p class="text-primary text-xs font-bold leading-normal text-center uppercase tracking-tighter"
+                                id="profile-badge">...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="flex flex-wrap gap-3 px-4 py-3" id="stats-container">
+            <div
+                class="flex min-w-[100px] flex-1 basis-[fit-content] flex-col gap-1 rounded border border-primary/20 bg-primary/5 p-3 items-center text-center">
+                <p class="text-primary tracking-tight text-xl font-bold leading-tight" id="stat-products">--</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase">Products</p>
+            </div>
+            <div
+                class="flex min-w-[100px] flex-1 basis-[fit-content] flex-col gap-1 rounded border border-primary/20 bg-primary/5 p-3 items-center text-center">
+                <p class="text-primary tracking-tight text-xl font-bold leading-tight" id="stat-skills">--</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase">Skills</p>
+            </div>
+            <div
+                class="flex min-w-[100px] flex-1 basis-[fit-content] flex-col gap-1 rounded border border-primary/20 bg-primary/5 p-3 items-center text-center">
+                <p class="text-primary tracking-tight text-xl font-bold leading-tight" id="stat-hobbies">--</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase">Hobbies</p>
+            </div>
+        </div>
+
+        <!-- Bio & Description -->
+        <div class="px-4 py-4 space-y-6">
+            <section>
+                <h3
+                    class="text-primary text-sm font-bold leading-tight tracking-widest uppercase mb-3 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">info</span> About Me
+                </h3>
+                <div class="p-4 border-l-2 border-primary bg-primary/5 rounded-r">
+                    <p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed" id="profile-bio">Loading...
+                    </p>
+                    <p class="text-primary text-xs font-bold mt-3 uppercase tracking-tighter italic" id="profile-since">
+                    </p>
+                </div>
+            </section>
+
+            <!-- Skills -->
+            <section>
+                <h3
+                    class="text-primary text-sm font-bold leading-tight tracking-widest uppercase mb-3 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">terminal</span> Skills
+                </h3>
+                <div class="flex flex-col gap-2" id="skills-list"></div>
+            </section>
+
+            <!-- Hobbies -->
+            <section>
+                <h3
+                    class="text-primary text-sm font-bold leading-tight tracking-widest uppercase mb-3 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">sports_esports</span> Hobbies
+                </h3>
+                <div class="flex flex-wrap gap-2" id="hobbies-list"></div>
+            </section>
+        </div>
+
+        <div class="h-20 bg-transparent"></div>
+
+        <!-- Bottom Navigation -->
+        <div
+            class="fixed bottom-0 left-0 right-0 flex gap-2 border-t border-primary/20 bg-background-light dark:bg-background-dark px-4 pb-6 pt-2 z-50">
+            <a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500 dark:text-slate-400"
+                href="/"><span class="material-symbols-outlined">home</span>
+                <p class="text-[10px] font-bold uppercase tracking-widest">Home</p>
+            </a>
+            <a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500 dark:text-slate-400"
+                href="/store"><span class="material-symbols-outlined">sports_esports</span>
+                <p class="text-[10px] font-bold uppercase tracking-widest">Games</p>
+            </a>
+            <a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500 dark:text-slate-400"
+                href="/daily"><span class="material-symbols-outlined">palette</span>
+                <p class="text-[10px] font-bold uppercase tracking-widest">Themes</p>
+            </a>
+            <a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary" href="/profile"><span
+                    class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">person</span>
+                <p class="text-[10px] font-bold uppercase tracking-widest">Profile</p>
+            </a>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/theme.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const profile = await API.get('/api/profile');
+
+                document.getElementById('profile-name').textContent = `@${profile.name || 'maxs1el'}`;
+                document.getElementById('profile-badge').textContent = profile.badge_text || '';
+                document.getElementById('profile-bio').textContent = profile.bio || '';
+                document.getElementById('profile-since').textContent = profile.created_since || '';
+
+                const avatarUrl = profile.avatar && !profile.avatar.includes('default')
+                    ? profile.avatar
+                    : 'https://lh3.googleusercontent.com/aida-public/AB6AXuBgQ1kddWvwowj06Pg-iVja6fNYBLGc06ccbl6uQ049F4dpLImWOZgN2b_REePQE9uVV98B4eYNNrcnBe1pO82F0fvfHTa3mc-B2cEEqjsE8yQ_gUiDo-vRZ4oKVxozJB0lcwA97yfCQ64tUYGWiDIsm5Z3uayhe4jvjVHCB6mQm31ggNPic-fWONzn35vtj_10OQVJyhza6t9NGPZWZr9UVbcclVxgI3JYEO03fOgUr83Uo5bShQvjAMTygFfdgUpZ-B05cdtM4zs';
+                document.getElementById('profile-avatar').style.backgroundImage = `url('${avatarUrl}')`;
+
+                // Stats
+                document.getElementById('stat-skills').textContent = profile.skills?.length || 0;
+                document.getElementById('stat-hobbies').textContent = profile.hobbies?.length || 0;
+
+                // Load product count
+                try {
+                    const products = await API.get('/api/products');
+                    document.getElementById('stat-products').textContent = products.length;
+                } catch (e) { document.getElementById('stat-products').textContent = '0'; }
+
+                // Skills
+                const skillsList = document.getElementById('skills-list');
+                (profile.skills || []).forEach(skill => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center p-3 border border-primary/20 bg-primary/5 rounded';
+                    div.innerHTML = `
+            <span class="text-slate-300 text-sm font-medium">${skill.name}</span>
+            <span class="text-primary text-xs font-bold border border-primary px-2 py-0.5 uppercase">${skill.level}</span>
+          `;
+                    skillsList.appendChild(div);
+                });
+
+                // Hobbies
+                const hobbiesList = document.getElementById('hobbies-list');
+                (profile.hobbies || []).forEach(hobby => {
+                    const span = document.createElement('span');
+                    span.className = 'px-3 py-1 bg-primary/20 text-primary text-xs font-bold rounded-full border border-primary/30 uppercase tracking-tighter';
+                    span.textContent = hobby.name;
+                    hobbiesList.appendChild(span);
+                });
+
+            } catch (err) {
+                console.error('Failed to load profile:', err);
+            }
+        });
+    </script>
+</body>
+
+</html>

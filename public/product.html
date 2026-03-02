@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Product Detail | maxs1el</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#0df2f2", "secondary": "#bc13fe", "background-light": "#f5f8f8", "background-dark": "#0a0a1a", "pixel-bg": "#14142b" },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                    borderRadius: { "DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .pixel-border {
+            box-shadow: 0 -4px 0 0 #0df2f2, 0 4px 0 0 #0df2f2, -4px 0 0 0 #0df2f2, 4px 0 0 0 #0df2f2;
+            margin: 4px;
+        }
+
+        .pixel-border-purple {
+            box-shadow: 0 -4px 0 0 #bc13fe, 0 4px 0 0 #bc13fe, -4px 0 0 0 #bc13fe, 4px 0 0 0 #bc13fe;
+            margin: 4px;
+        }
+
+        .neon-glow {
+            text-shadow: 0 0 10px #0df2f2;
+        }
+
+        .neon-glow-purple {
+            text-shadow: 0 0 10px #bc13fe;
+        }
+
+        body {
+            background-color: #0a0a1a;
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="font-display text-slate-100 bg-background-dark min-h-screen pb-32">
+    <!-- Header -->
+    <div class="flex items-center bg-background-dark p-4 pb-4 justify-between border-b-4 border-primary/20">
+        <div class="text-primary flex size-10 shrink-0 items-center justify-center cursor-pointer"
+            onclick="history.back()">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </div>
+        <h2 class="text-primary text-xl font-bold leading-tight tracking-tight neon-glow">STORE // PRODUCT</h2>
+        <div class="flex w-10 items-center justify-end">
+            <button class="text-secondary cursor-pointer" onclick="shareProduct()">
+                <span class="material-symbols-outlined">share</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product Image Hero -->
+    <div class="p-4">
+        <div class="relative">
+            <div class="w-full bg-center bg-no-repeat bg-cover flex flex-col justify-end overflow-hidden aspect-video pixel-border-purple"
+                id="product-image" style="background-color: #14142b;">
+                <div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent opacity-60"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="px-4 py-2">
+        <div class="flex justify-between items-start mb-2">
+            <h1 class="text-primary tracking-tight text-3xl font-bold leading-tight neon-glow" id="product-name">
+                Loading...</h1>
+            <div class="bg-secondary/20 text-secondary px-3 py-1 border-2 border-secondary text-xs font-bold mt-2"
+                id="product-stock">
+                STOCK: --
+            </div>
+        </div>
+        <div class="flex gap-3 mb-6 flex-wrap" id="product-features"></div>
+        <div class="bg-pixel-bg border-l-4 border-primary p-4 mb-8">
+            <h3 class="text-primary text-sm font-bold mb-2 uppercase tracking-widest">Description</h3>
+            <p class="text-slate-300 text-sm leading-relaxed" id="product-description">Loading...</p>
+        </div>
+
+        <!-- Payment Selection -->
+        <div class="mb-8">
+            <h3 class="text-primary text-sm font-bold mb-4 uppercase tracking-widest flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">payments</span>
+                Select Payment Method
+            </h3>
+            <div class="grid grid-cols-1 gap-4" id="payment-methods">
+                <div class="flex items-center justify-between p-4 bg-pixel-bg border-2 border-primary cursor-pointer group payment-option"
+                    data-method="QRIS" onclick="selectPayment('QRIS', this)">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white flex items-center justify-center p-1">
+                            <span class="material-symbols-outlined text-background-dark text-3xl">qr_code_2</span>
+                        </div>
+                        <div>
+                            <p class="text-slate-100 font-bold">QRIS</p>
+                            <p class="text-slate-400 text-xs">All Digital Wallets</p>
+                        </div>
+                    </div>
+                    <div class="w-6 h-6 border-2 border-primary flex items-center justify-center">
+                        <div class="w-3 h-3 bg-primary"></div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-pixel-bg border-2 border-primary/30 hover:border-primary cursor-pointer payment-option"
+                    data-method="DANA" onclick="selectPayment('DANA', this)">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-sky-500 flex items-center justify-center">
+                            <span class="text-white font-black italic">DANA</span>
+                        </div>
+                        <div>
+                            <p class="text-slate-100 font-bold">DANA</p>
+                            <p class="text-slate-400 text-xs">Direct Wallet Transfer</p>
+                        </div>
+                    </div>
+                    <div class="w-6 h-6 border-2 border-primary/30 radio-dot"></div>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-pixel-bg border-2 border-primary/30 hover:border-primary cursor-pointer payment-option"
+                    data-method="BRIVA" onclick="selectPayment('BRIVA', this)">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-secondary flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-3xl">account_balance</span>
+                        </div>
+                        <div>
+                            <p class="text-slate-100 font-bold">Bank Transfer</p>
+                            <p class="text-slate-400 text-xs">Virtual Account / Manual</p>
+                        </div>
+                    </div>
+                    <div class="w-6 h-6 border-2 border-primary/30 radio-dot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Action Bar -->
+    <div class="fixed bottom-0 left-0 right-0 bg-background-dark border-t-4 border-primary p-4 z-50">
+        <div class="flex items-center gap-4">
+            <div class="flex-1">
+                <p class="text-slate-400 text-xs uppercase font-bold">Total Price</p>
+                <p class="text-primary text-2xl font-bold neon-glow" id="product-price">$--.--</p>
+            </div>
+            <button
+                class="flex-[2] bg-primary text-background-dark font-black text-lg py-4 pixel-border hover:brightness-110 active:translate-y-1 transition-all uppercase tracking-tighter"
+                id="buy-btn" onclick="buyProduct()">
+                Buy Now
+            </button>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        let currentProduct = null;
+        let selectedPayment = 'QRIS';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const productId = params.get('id');
+
+            if (!productId) {
+                window.location.href = '/store';
+                return;
+            }
+
+            try {
+                currentProduct = await API.get(`/api/products/${productId}`);
+                renderProduct(currentProduct);
+            } catch (err) {
+                document.getElementById('product-name').textContent = 'Product not found';
+            }
+        });
+
+        function renderProduct(p) {
+            document.title = `${p.name} | maxs1el Store`;
+            document.getElementById('product-name').textContent = p.name;
+            document.getElementById('product-description').textContent = p.description || '';
+            document.getElementById('product-stock').textContent = `STOCK: ${p.stock}`;
+            document.getElementById('product-price').textContent = `$${p.price.toFixed(2)}`;
+
+            if (p.image) {
+                document.getElementById('product-image').style.backgroundImage = `url('${p.image}')`;
+            }
+
+            const featuresEl = document.getElementById('product-features');
+            featuresEl.innerHTML = '';
+            if (p.features && p.features.length) {
+                p.features.forEach((f, i) => {
+                    const badge = document.createElement('div');
+                    const color = i % 2 === 0 ? 'primary' : 'secondary';
+                    badge.className = `flex h-8 shrink-0 items-center justify-center gap-x-2 border-2 border-${color} bg-${color}/10 px-4`;
+                    badge.innerHTML = `<span class="material-symbols-outlined text-sm text-${color}">${i === 0 ? 'high_quality' : 'bolt'}</span><p class="text-${color} text-xs font-bold uppercase">${f}</p>`;
+                    featuresEl.appendChild(badge);
+                });
+            }
+        }
+
+        function selectPayment(method, el) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('border-primary');
+                opt.classList.add('border-primary/30');
+                const dot = opt.querySelector('.radio-dot');
+                if (dot) dot.innerHTML = '';
+            });
+            el.classList.remove('border-primary/30');
+            el.classList.add('border-primary');
+            const dot = el.querySelector('.radio-dot, div:last-child');
+            if (dot) dot.innerHTML = '<div class="w-3 h-3 bg-primary"></div>';
+        }
+
+        async function buyProduct() {
+            if (!currentProduct) return;
+
+            const btn = document.getElementById('buy-btn');
+            btn.textContent = 'Processing...';
+            btn.disabled = true;
+
+            try {
+                const result = await API.post('/api/orders', {
+                    product_id: currentProduct.id,
+                    payment_method: selectedPayment
+                });
+
+                if (result.success) {
+                    if (result.payment.url) {
+                        window.open(result.payment.url, '_blank');
+                    }
+                    alert(`Order created! ID: ${result.order.order_id}\nStatus: ${result.order.status}`);
+                }
+            } catch (err) {
+                alert('Failed to create order: ' + err.message);
+            } finally {
+                btn.textContent = 'Buy Now';
+                btn.disabled = false;
+            }
+        }
+
+        function shareProduct() {
+            if (navigator.share) {
+                navigator.share({ title: currentProduct?.name || 'maxs1el Product', url: window.location.href });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link copied!');
+            }
+        }
+    </script>
+</body>
+
+</html>

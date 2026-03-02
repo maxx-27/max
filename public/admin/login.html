@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Admin Login | maxs1el</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#0df2f2", "secondary": "#bc13fe", "background-light": "#f5f8f8", "background-dark": "#0a0f0f" },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .pixel-grid {
+            background-size: 20px 20px;
+            background-image: linear-gradient(to right, rgba(13, 242, 242, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(13, 242, 242, 0.05) 1px, transparent 1px);
+        }
+
+        .pixel-border {
+            box-shadow: 0 -4px 0 0 #0a0f0f, 0 4px 0 0 #0a0f0f, -4px 0 0 0 #0a0f0f, 4px 0 0 0 #0a0f0f;
+        }
+
+        .pixel-glow {
+            box-shadow: 0 0 15px rgba(13, 242, 242, 0.6), 0 0 5px rgba(188, 19, 254, 0.4);
+        }
+
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body
+    class="font-display bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center overflow-x-hidden selection:bg-primary selection:text-background-dark">
+    <div class="fixed inset-0 pixel-grid pointer-events-none"></div>
+    <div class="fixed inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/10 pointer-events-none">
+    </div>
+
+    <div
+        class="relative w-full max-w-[440px] p-8 mx-4 bg-background-dark/80 backdrop-blur-sm border-2 border-primary/30 rounded-lg pixel-glow">
+        <div class="flex flex-col items-center mb-10">
+            <div class="mb-6 p-4 border-2 border-primary text-primary bg-primary/10 rounded">
+                <span class="material-symbols-outlined text-5xl">videogame_asset</span>
+            </div>
+            <h2 class="text-primary text-2xl font-bold tracking-[0.2em] uppercase mb-2">maxs1el</h2>
+            <div class="h-1 w-24 bg-gradient-to-r from-primary via-secondary to-primary"></div>
+        </div>
+
+        <h1 class="text-slate-100 text-3xl font-bold leading-tight text-center mb-2 tracking-tight">SYSTEM ACCESS</h1>
+        <p class="text-primary/70 text-xs font-medium leading-normal mb-8 text-center uppercase tracking-[0.1em]">
+            Initialization Required</p>
+
+        <!-- Error Message -->
+        <div class="hidden mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-sm text-center"
+            id="error-msg"></div>
+
+        <form id="login-form" onsubmit="handleLogin(event)" class="space-y-6">
+            <div class="flex flex-col gap-2">
+                <label class="text-secondary text-xs font-bold tracking-widest uppercase ml-1">Username</label>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-symbols-outlined text-primary/50 text-xl">person</span>
+                    </div>
+                    <input id="username"
+                        class="form-input block w-full pl-10 pr-4 py-4 bg-background-dark border-2 border-primary/20 rounded focus:border-primary focus:ring-0 text-primary placeholder:text-primary/30 transition-all duration-300"
+                        placeholder="P1_USER" type="text" required />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-secondary text-xs font-bold tracking-widest uppercase ml-1">Security Key</label>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-symbols-outlined text-primary/50 text-xl">lock</span>
+                    </div>
+                    <input id="password"
+                        class="form-input block w-full pl-10 pr-12 py-4 bg-background-dark border-2 border-primary/20 rounded focus:border-primary focus:ring-0 text-primary placeholder:text-primary/30 transition-all duration-300"
+                        placeholder="********" type="password" required />
+                    <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-primary/50 hover:text-primary"
+                        type="button" onclick="togglePassword()">
+                        <span class="material-symbols-outlined" id="eye-icon">visibility_off</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" id="login-btn"
+                    class="w-full bg-primary hover:bg-primary/80 text-background-dark font-black text-lg py-4 rounded uppercase tracking-[0.3em] transition-all active:scale-95 pixel-border pixel-glow group flex items-center justify-center gap-3">
+                    <span id="btn-text">Login</span>
+                    <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform"
+                        id="btn-icon">terminal</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-8 flex items-center justify-center text-[10px] text-primary/40 uppercase tracking-tighter">
+            <span class="font-mono">v4.0.2_AUTH</span>
+        </div>
+
+        <div class="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-secondary"></div>
+        <div class="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-secondary"></div>
+        <div class="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-secondary"></div>
+        <div class="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-secondary"></div>
+    </div>
+
+    <div class="fixed bottom-4 left-4 flex gap-2">
+        <div class="w-2 h-2 bg-primary animate-pulse"></div>
+        <div class="w-2 h-2 bg-secondary animate-pulse"></div>
+        <div class="w-2 h-2 bg-primary/40"></div>
+    </div>
+    <div class="fixed top-4 right-4 text-primary/20 text-[10px] font-mono select-none">0x102222_BUFFER_SECURE</div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Redirect if already authenticated
+        if (API.isAuthenticated()) {
+            window.location.href = '/admin/dashboard';
+        }
+
+        function togglePassword() {
+            const pwd = document.getElementById('password');
+            const icon = document.getElementById('eye-icon');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.textContent = 'visibility';
+            } else {
+                pwd.type = 'password';
+                icon.textContent = 'visibility_off';
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const errorEl = document.getElementById('error-msg');
+            const btn = document.getElementById('login-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnIcon = document.getElementById('btn-icon');
+
+            errorEl.classList.add('hidden');
+            btnText.textContent = 'Connecting...';
+            btnIcon.textContent = 'hourglass_top';
+            btn.disabled = true;
+
+            try {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                await API.login(username, password);
+                btnText.textContent = 'Access Granted!';
+                btnIcon.textContent = 'check_circle';
+
+                setTimeout(() => {
+                    window.location.href = '/admin/dashboard';
+                }, 500);
+            } catch (err) {
+                errorEl.textContent = err.message || 'Authentication failed.';
+                errorEl.classList.remove('hidden');
+                btnText.textContent = 'Login';
+                btnIcon.textContent = 'terminal';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>
