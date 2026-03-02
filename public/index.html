@@ -4,8 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>@maxs1el | Pixel Art Hub</title>
-  <meta name="description" content="maxs1el - Premium App Supplier & Content Creator. Your one-stop pixel art hub." />
+  <title>maxs1el | Digital Creator</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
     rel="stylesheet" />
@@ -18,216 +17,174 @@
         extend: {
           colors: {
             "primary": "#0df2f2",
-            "secondary": "#a855f7",
-            "neon-blue": "#00f3ff",
-            "vibrant-purple": "#bc13fe",
-            "background-light": "#f5f8f8",
-            "background-dark": "#0a0a1a",
+            "secondary": "#9d00ff",
+            "background-dark": "#0a0f0f",
+            "surface": "#161e1e",
+            "surface-accent": "#1e2b2b"
           },
           fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
-          borderRadius: { "DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "0px" },
+          borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
         },
       },
     }
   </script>
   <style>
-    .pixel-border {
-      box-shadow: 0 -4px 0 0 #000, 0 4px 0 0 #000, -4px 0 0 0 #000, 4px 0 0 0 #000;
+    body {
+      font-family: 'Space Grotesk', sans-serif;
     }
 
-    .pixel-grid {
-      background-image: radial-gradient(#bc13fe 1px, transparent 1px);
-      background-size: 20px 20px;
-      opacity: 0.1;
+    .neon-glow {
+      box-shadow: 0 0 15px rgba(13, 242, 242, 0.3);
     }
 
-    .pixel-text-shadow {
-      text-shadow: 2px 2px 0px #bc13fe;
-    }
-
-    .pixelated {
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
-    }
-
-    .skeleton {
-      background: linear-gradient(90deg, #1a1a2e 25%, #2a2a4e 50%, #1a1a2e 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-
-    @keyframes shimmer {
-      0% {
-        background-position: 200% 0;
-      }
-
-      100% {
-        background-position: -200% 0;
-      }
+    .gradient-mesh {
+      background-color: #0a0f0f;
+      background-image:
+        radial-gradient(at 0% 0%, rgba(13, 242, 242, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(157, 0, 255, 0.15) 0px, transparent 50%);
     }
   </style>
 </head>
 
-<body
-  class="bg-background-dark font-display text-slate-100 min-h-screen flex flex-col items-center overflow-x-hidden selection:bg-neon-blue selection:text-black">
-  <div class="fixed inset-0 pixel-grid pointer-events-none z-0"></div>
-  <div class="relative w-full max-w-md flex flex-col min-h-screen z-10">
+<body class="bg-background-dark text-slate-100 min-h-screen font-display gradient-mesh">
+  <div class="relative flex min-h-screen w-full flex-col max-w-md mx-auto border-x border-primary/10 shadow-2xl">
     <!-- Header -->
-    <header class="flex items-center justify-between p-6">
-      <div
-        class="flex items-center justify-center w-10 h-10 border-2 border-primary bg-gradient-to-br from-neon-blue to-vibrant-purple cursor-pointer active:scale-95 transition-transform"
-        id="menu-button">
-        <span class="material-symbols-outlined text-background-dark font-bold">menu</span>
-      </div>
-      <h1
-        class="text-xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-vibrant-purple pixel-text-shadow uppercase"
-        id="site-name">@maxs1el</h1>
-      <div
-        class="flex items-center justify-center w-10 h-10 border-2 border-primary bg-gradient-to-br from-neon-blue to-vibrant-purple cursor-pointer active:scale-95 transition-transform"
-        id="share-button" onclick="shareProfile()">
-        <span class="material-symbols-outlined text-background-dark font-bold">share</span>
-      </div>
+    <header
+      class="flex items-center bg-background-dark/80 backdrop-blur-md sticky top-0 z-50 p-4 justify-between border-b border-primary/10">
+      <a href="/menu"
+        class="flex size-10 items-center justify-center rounded-xl bg-surface hover:bg-surface-accent transition-colors">
+        <span class="material-symbols-outlined text-primary">menu</span>
+      </a>
+      <span class="text-primary font-bold tracking-tighter text-xl">MAXS1EL</span>
+      <button onclick="shareLink()"
+        class="flex size-10 items-center justify-center rounded-xl bg-surface hover:bg-surface-accent transition-colors">
+        <span class="material-symbols-outlined text-primary">share</span>
+      </button>
     </header>
 
-    <main class="flex-1 px-6 pb-24">
-      <!-- Profile Section -->
-      <section class="flex flex-col items-center mt-8 mb-12">
-        <div class="relative p-1 mb-6 bg-gradient-to-br from-neon-blue to-vibrant-purple">
+    <main class="flex-grow">
+      <!-- Profile -->
+      <div class="flex p-8 flex-col items-center">
+        <div class="relative group">
           <div
-            class="w-32 h-32 bg-background-dark flex items-center justify-center overflow-hidden border-4 border-black">
-            <img alt="Avatar" class="w-full h-full object-cover pixelated grayscale brightness-125 contrast-125"
-              id="profile-avatar" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" />
+            class="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-full blur opacity-50 group-hover:opacity-100 transition duration-1000">
           </div>
-          <div
-            class="absolute -bottom-2 -right-2 w-8 h-8 border-2 border-black flex items-center justify-center bg-gradient-to-br from-neon-blue to-vibrant-purple">
-            <span class="material-symbols-outlined text-background-dark text-sm font-bold">check</span>
+          <div id="avatar"
+            class="relative bg-center bg-no-repeat aspect-square bg-cover rounded-full h-32 w-32 border-2 border-primary/30"
+            style="background-image: url('/uploads/default-avatar.png')"></div>
+        </div>
+        <div class="mt-6 flex flex-col items-center text-center">
+          <h1 id="profileName" class="text-white text-3xl font-bold tracking-tight">@maxs1el</h1>
+          <p id="profileTitle" class="text-primary font-medium mt-1">Digital Creator</p>
+          <div id="profileBadge" class="flex items-center gap-1 mt-2 text-slate-400 text-sm">
+            <span class="material-symbols-outlined text-xs">verified</span>
+            <span>Level 42 Explorer</span>
           </div>
         </div>
-        <div class="text-center">
-          <h2
-            class="text-2xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-vibrant-purple pixel-text-shadow uppercase mb-1"
-            id="profile-name">...</h2>
-          <p class="text-primary/90 text-sm font-bold uppercase tracking-tight mb-1" id="profile-title">...</p>
-          <p class="text-slate-400 text-[10px] font-medium uppercase tracking-[0.3em]" id="profile-subtitle">...</p>
-        </div>
-      </section>
 
-      <!-- Social Links -->
-      <section class="space-y-4" id="links-section">
-        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.4em] text-center mb-6">Level Up
-          Connections</h3>
-        <div id="links-container">
-          <div class="skeleton h-14 mb-4"></div>
-          <div class="skeleton h-14 mb-4"></div>
-          <div class="skeleton h-14 mb-4"></div>
-        </div>
-      </section>
-
-      <!-- Activity Status -->
-      <section class="mt-12 text-center">
-        <div class="inline-block p-4 border-2 border-primary/20 bg-primary/5 backdrop-blur-sm">
-          <p class="text-[9px] text-primary/60 uppercase tracking-[0.3em] mb-3">Quest Progress: Cyber Drift 2088</p>
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-slate-900 border-2 border-primary/40 flex items-center justify-center">
-              <span class="material-symbols-outlined text-primary text-2xl animate-pulse">joystick</span>
-            </div>
-            <div class="text-left">
-              <p class="text-xs font-bold text-primary tracking-wider uppercase" id="profile-badge">Level 84 Master</p>
-              <div class="w-32 h-2 bg-slate-800 mt-2 relative overflow-hidden">
-                <div
-                  class="absolute top-0 left-0 w-3/4 h-full bg-gradient-to-r from-neon-blue to-vibrant-purple shadow-[0_0_8px_#0df2f2]">
-                </div>
-              </div>
-            </div>
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-3 w-full mt-8">
+          <div class="flex flex-col gap-1 rounded-xl bg-surface border border-primary/10 p-4 items-center text-center">
+            <p id="statProducts" class="text-slate-100 text-xl font-bold">0</p>
+            <p class="text-slate-500 text-xs uppercase tracking-widest font-semibold">Products</p>
+          </div>
+          <div class="flex flex-col gap-1 rounded-xl bg-surface border border-primary/10 p-4 items-center text-center">
+            <p id="statLinks" class="text-slate-100 text-xl font-bold">0</p>
+            <p class="text-slate-500 text-xs uppercase tracking-widest font-semibold">Links</p>
+          </div>
+          <div class="flex flex-col gap-1 rounded-xl bg-surface border border-primary/10 p-4 items-center text-center">
+            <p id="statSkills" class="text-slate-100 text-xl font-bold">0</p>
+            <p class="text-slate-500 text-xs uppercase tracking-widest font-semibold">Skills</p>
           </div>
         </div>
-      </section>
+
+        <!-- Quick Links -->
+        <div class="w-full mt-8 space-y-4">
+          <h2 class="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] text-center">Quick Links</h2>
+          <div id="linksContainer" class="space-y-3">
+            <div class="text-center text-slate-500 py-4">Loading...</div>
+          </div>
+        </div>
+      </div>
+      <div class="h-24"></div>
     </main>
 
-    <!-- Navigation Bar -->
-    <nav
-      class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-background-dark/95 backdrop-blur-md border-t-4 border-primary/30 z-50">
-      <div class="flex justify-around items-center h-20 px-4">
-        <a class="text-primary flex flex-col items-center transition-all hover:scale-110" href="/">
-          <span class="material-symbols-outlined fill-1 text-3xl">home</span>
+    <!-- Bottom Nav -->
+    <footer class="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50">
+      <div
+        class="flex items-center justify-around gap-2 border-t border-primary/10 bg-background-dark/90 backdrop-blur-xl px-4 py-3 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+        <a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="/">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">home</span>
+          <span class="text-[10px] font-bold uppercase tracking-widest">Home</span>
         </a>
-        <a class="text-primary/40 flex flex-col items-center transition-all hover:text-primary/80" href="/store">
-          <span class="material-symbols-outlined text-3xl">sports_esports</span>
+        <a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 hover:text-primary transition-colors"
+          href="/store">
+          <span class="material-symbols-outlined">sports_esports</span>
+          <span class="text-[10px] font-bold uppercase tracking-widest">Store</span>
         </a>
-        <a class="relative -top-6 flex items-center justify-center w-16 h-16 bg-gradient-to-br from-neon-blue to-vibrant-purple border-4 border-black shadow-[4px_4px_0px_0px_#000] transform rotate-45 active:scale-95 transition-all group"
-          href="/admin/login">
-          <span
-            class="material-symbols-outlined text-background-dark font-bold text-4xl transform -rotate-45">add</span>
+        <div class="flex-1 flex justify-center -mt-8">
+          <a href="/admin/login"
+            class="bg-gradient-to-br from-primary to-secondary size-14 rounded-full flex items-center justify-center shadow-lg shadow-primary/25 border-4 border-background-dark group hover:scale-105 transition-transform active:scale-95">
+            <span class="material-symbols-outlined text-background-dark text-3xl font-bold">add</span>
+          </a>
+        </div>
+        <a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 hover:text-primary transition-colors"
+          href="/daily">
+          <span class="material-symbols-outlined">terminal</span>
+          <span class="text-[10px] font-bold uppercase tracking-widest">Daily</span>
         </a>
-        <a class="text-primary/40 flex flex-col items-center transition-all hover:text-primary/80" href="/daily">
-          <span class="material-symbols-outlined text-3xl">palette</span>
-        </a>
-        <a class="text-primary/40 flex flex-col items-center transition-all hover:text-primary/80" href="/profile">
-          <span class="material-symbols-outlined text-3xl">person</span>
+        <a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 hover:text-primary transition-colors"
+          href="/profile">
+          <span class="material-symbols-outlined">person</span>
+          <span class="text-[10px] font-bold uppercase tracking-widest">Profile</span>
         </a>
       </div>
-    </nav>
+      <div class="bg-background-dark/90 h-4"></div>
+    </footer>
   </div>
 
-  <script src="/js/app.js"></script>
-  <script src="/js/theme.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
+    async function loadData() {
       try {
-        // Load profile
-        const profile = await API.get('/api/profile');
-        document.getElementById('profile-name').textContent = profile.name || 'maxs1el';
-        document.getElementById('profile-title').textContent = profile.title || '';
-        document.getElementById('profile-subtitle').textContent = profile.subtitle || '';
-        document.getElementById('profile-badge').textContent = profile.badge_text || '';
+        const [profileRes, linksRes, productsRes] = await Promise.all([
+          fetch('/api/profile'), fetch('/api/links'), fetch('/api/products')
+        ]);
+        const profile = await profileRes.json();
+        const links = await linksRes.json();
+        const products = await productsRes.json();
 
-        if (profile.avatar && !profile.avatar.includes('default')) {
-          document.getElementById('profile-avatar').src = profile.avatar;
-        } else {
-          document.getElementById('profile-avatar').src = 'https://lh3.googleusercontent.com/aida-public/AB6AXuC-tDZmq8vaVJc_-vBP1ip_kt61kZ_1BT1PeDyuYhyw5qsukkocEBZOkVvgO4qBi7Jptfw8TSJTz3OyKpg7uKRBtQ6-KJwguvLVl_QFYbhmQsdMv1nJH4kdPN65C2TGfQ_jzl9QvBf9hbDe-48LmOy6UpMU5xHT8u1ZpAut0L3Pdkz7wB1cr-4zpuNfEFOTlLuuQdilnek6ddl9Ktw0u0dJZZpNS6yRZjjHmQKVLcu1C72ZqhWTVyThrWyTXVgLLjkktbp7Z04-BO0';
-        }
+        document.getElementById('profileName').textContent = '@' + (profile.name || 'maxs1el');
+        document.getElementById('profileTitle').textContent = profile.title || 'Digital Creator';
+        document.getElementById('profileBadge').querySelector('span:last-child').textContent = profile.badge_text || '';
+        if (profile.avatar) document.getElementById('avatar').style.backgroundImage = `url('${profile.avatar}')`;
 
-        // Load social links
-        const links = await API.get('/api/links');
-        const container = document.getElementById('links-container');
-        container.innerHTML = '';
+        document.getElementById('statProducts').textContent = products.length;
+        document.getElementById('statLinks').textContent = links.length;
+        document.getElementById('statSkills').textContent = (profile.skills || []).length;
 
-        const iconMap = { 'photo_camera': 'photo_camera', 'videocam': 'videocam', 'chat': 'chat', 'group': 'group', 'link': 'link' };
-
-        links.forEach(link => {
-          const a = document.createElement('a');
-          a.className = 'block group';
-          a.href = '#';
-          a.onclick = async (e) => {
-            e.preventDefault();
-            await API.trackClick(link.id);
-            window.open(link.url, '_blank');
-          };
-          a.innerHTML = `
-            <div class="bg-gradient-to-r from-neon-blue to-vibrant-purple text-background-dark p-4 flex items-center justify-between border-4 border-black shadow-[4px_4px_0px_0px_#bc13fe] group-active:translate-x-1 group-active:translate-y-1 group-active:shadow-none transition-all">
-              <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined">${link.icon || 'link'}</span>
-                <span class="font-bold uppercase tracking-tighter">${link.title}</span>
-              </div>
-              <span class="material-symbols-outlined text-sm">arrow_forward_ios</span>
-            </div>
-          `;
-          container.appendChild(a);
-        });
-
-      } catch (err) {
-        console.error('Failed to load data:', err);
-      }
-    });
-
-    function shareProfile() {
-      if (navigator.share) {
-        navigator.share({ title: '@maxs1el', url: window.location.href });
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        alert('Link copied!');
-      }
+        const container = document.getElementById('linksContainer');
+        container.innerHTML = links.map(link => `
+            <a href="${link.url}" target="_blank" onclick="trackClick(${link.id})"
+               class="flex items-center justify-between p-4 bg-surface hover:bg-surface-accent border border-primary/5 rounded-xl transition-all group">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <span class="material-symbols-outlined text-primary">${link.icon || 'link'}</span>
+                    </div>
+                    <span class="font-semibold text-slate-100">${link.title}</span>
+                </div>
+                <span class="material-symbols-outlined text-slate-600 group-hover:text-primary transition-colors">chevron_right</span>
+            </a>
+        `).join('');
+      } catch (err) { console.error('Load error:', err); }
     }
+
+    function trackClick(id) { fetch('/api/links/click/' + id, { method: 'POST' }).catch(() => { }); }
+    function shareLink() {
+      if (navigator.share) navigator.share({ title: 'maxs1el', url: window.location.href });
+      else navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'));
+    }
+
+    loadData();
   </script>
 </body>
 

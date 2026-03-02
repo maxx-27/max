@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Link Management - maxs1el</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df2f2",
+                        "secondary": "#bc13fe",
+                        "background-dark": "#0a0f0f",
+                    },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100dvh;
+        }
+
+        .vibrant-gradient {
+            background: linear-gradient(135deg, #0df2f2 0%, #bc13fe 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark font-display text-slate-100 min-h-screen flex flex-col">
+    <header
+        class="flex items-center justify-between p-4 border-b border-primary/20 bg-background-dark/80 backdrop-blur-md sticky top-0 z-10">
+        <div class="flex items-center gap-3">
+            <a href="/admin/dashboard" class="material-symbols-outlined text-primary text-2xl">arrow_back</a>
+            <h1 class="text-xl font-bold tracking-tight uppercase italic">Link Matrix</h1>
+        </div>
+    </header>
+
+    <main class="flex-1 p-4 space-y-6 pb-24">
+        <!-- Active Links -->
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-sm font-bold text-secondary uppercase tracking-[0.2em]">Active Matrix</h2>
+                <span id="linkCount" class="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded">0 TOTAL</span>
+            </div>
+            <div id="linkList" class="space-y-3">
+                <div class="text-center text-slate-500 py-4">Loading...</div>
+            </div>
+        </section>
+
+        <!-- Add/Edit Form -->
+        <section class="border-t border-secondary/30 pt-6">
+            <h2 class="text-sm font-bold text-primary uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">data_object</span> Matrix Input Form
+            </h2>
+            <div class="bg-secondary/5 border border-secondary/20 p-6 rounded-xl space-y-5">
+                <input type="hidden" id="editId" value="" />
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Link Label</label>
+                    <input id="linkTitle"
+                        class="w-full bg-background-dark border border-slate-700 rounded px-4 py-2 text-slate-100 focus:outline-none focus:border-primary transition-all"
+                        placeholder="e.g. Instagram" type="text" />
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Target URL</label>
+                    <input id="linkUrl"
+                        class="w-full bg-background-dark border border-slate-700 rounded px-4 py-2 text-slate-100 focus:outline-none focus:border-primary transition-all font-mono text-sm"
+                        placeholder="https://" type="url" />
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">Select Icon</label>
+                    <div id="iconPicker" class="grid grid-cols-6 gap-2">
+                    </div>
+                </div>
+                <input type="hidden" id="selectedIcon" value="link" />
+                <div class="pt-4 flex gap-3">
+                    <button onclick="saveLink()"
+                        class="flex-1 vibrant-gradient text-background-dark font-bold py-3 rounded uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(188,19,254,0.3)]">
+                        <span id="saveBtnText">Add to Matrix</span>
+                    </button>
+                    <button onclick="clearForm()"
+                        class="px-6 border border-slate-700 text-slate-400 font-bold py-3 rounded uppercase tracking-widest text-sm">Clear</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const token = localStorage.getItem('adminToken');
+        if (!token) window.location.href = '/admin/login';
+        const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
+
+        const icons = ['link', 'photo_camera', 'videocam', 'music_note', 'chat_bubble', 'call', 'mail', 'language', 'campaign', 'sports_esports', 'shopping_bag', 'favorite'];
+
+        function renderIconPicker() {
+            const container = document.getElementById('iconPicker');
+            container.innerHTML = icons.map(icon => `
+        <button onclick="selectIcon('${icon}')" class="icon-btn aspect-square flex items-center justify-center border border-slate-700 rounded hover:border-secondary transition-colors text-slate-400" data-icon="${icon}">
+            <span class="material-symbols-outlined">${icon}</span>
+        </button>
+    `).join('');
+            selectIcon('link');
+        }
+
+        function selectIcon(icon) {
+            document.getElementById('selectedIcon').value = icon;
+            document.querySelectorAll('.icon-btn').forEach(btn => {
+                if (btn.dataset.icon === icon) {
+                    btn.className = 'icon-btn aspect-square flex items-center justify-center border border-primary rounded bg-primary/20 text-primary';
+                } else {
+                    btn.className = 'icon-btn aspect-square flex items-center justify-center border border-slate-700 rounded hover:border-secondary transition-colors text-slate-400';
+                }
+            });
+        }
+
+        async function loadLinks() {
+            try {
+                const res = await fetch('/api/links');
+                const links = await res.json();
+                document.getElementById('linkCount').textContent = links.length + ' TOTAL';
+
+                document.getElementById('linkList').innerHTML = links.map(link => `
+            <div class="bg-slate-900/50 border border-primary/30 p-4 rounded-xl flex items-center justify-between">
+                <div class="flex items-center gap-4 min-w-0">
+                    <div class="size-12 rounded bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center border border-primary/40 shadow-[0_0_10px_rgba(13,242,242,0.2)] flex-shrink-0">
+                        <span class="material-symbols-outlined text-primary">${link.icon || 'link'}</span>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-slate-100">${link.title}</h3>
+                        <p class="text-xs text-slate-400 font-mono truncate">${link.url}</p>
+                        <p class="text-xs text-primary/50">${link.clicks || 0} clicks</p>
+                    </div>
+                </div>
+                <div class="flex gap-2 flex-shrink-0">
+                    <button onclick='editLink(${JSON.stringify(link)})' class="size-8 flex items-center justify-center rounded border border-slate-700 hover:border-primary transition-colors">
+                        <span class="material-symbols-outlined text-sm text-slate-400 hover:text-primary">edit</span>
+                    </button>
+                    <button onclick="deleteLink(${link.id})" class="size-8 flex items-center justify-center rounded border border-slate-700 hover:border-red-500 transition-colors">
+                        <span class="material-symbols-outlined text-sm text-slate-400 hover:text-red-500">delete</span>
+                    </button>
+                </div>
+            </div>
+        `).join('') || '<p class="text-center text-slate-500 py-4">No links yet</p>';
+            } catch (err) { console.error(err); }
+        }
+
+        function editLink(link) {
+            document.getElementById('editId').value = link.id;
+            document.getElementById('linkTitle').value = link.title;
+            document.getElementById('linkUrl').value = link.url;
+            selectIcon(link.icon || 'link');
+            document.getElementById('saveBtnText').textContent = 'Update Link';
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        function clearForm() {
+            document.getElementById('editId').value = '';
+            document.getElementById('linkTitle').value = '';
+            document.getElementById('linkUrl').value = '';
+            selectIcon('link');
+            document.getElementById('saveBtnText').textContent = 'Add to Matrix';
+        }
+
+        async function saveLink() {
+            const editId = document.getElementById('editId').value;
+            const body = {
+                title: document.getElementById('linkTitle').value,
+                url: document.getElementById('linkUrl').value,
+                icon: document.getElementById('selectedIcon').value,
+            };
+            if (!body.title || !body.url) return alert('Title and URL required');
+
+            try {
+                if (editId) {
+                    await fetch('/api/links/' + editId, { method: 'PUT', headers, body: JSON.stringify(body) });
+                } else {
+                    await fetch('/api/links', { method: 'POST', headers, body: JSON.stringify(body) });
+                }
+                clearForm();
+                loadLinks();
+            } catch (err) { alert('Error saving link'); }
+        }
+
+        async function deleteLink(id) {
+            if (!confirm('Delete this link?')) return;
+            await fetch('/api/links/' + id, { method: 'DELETE', headers });
+            loadLinks();
+        }
+
+        renderIconPicker();
+        loadLinks();
+    </script>
+</body>
+
+</html>

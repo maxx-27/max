@@ -74,6 +74,16 @@ async function initializeDatabase() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
+    `CREATE TABLE IF NOT EXISTS product_accounts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id INTEGER NOT NULL,
+      email TEXT,
+      password TEXT,
+      invite_link TEXT,
+      is_sold INTEGER DEFAULT 0,
+      order_id TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
     `CREATE TABLE IF NOT EXISTS orders (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       order_id TEXT UNIQUE NOT NULL,
@@ -148,7 +158,7 @@ async function initializeDatabase() {
     await client.execute('INSERT INTO social_links (title, url, icon, sort_order) VALUES (?, ?, ?, ?)', ['Instagram', 'https://instagram.com/maxs1el', 'photo_camera', 1]);
     await client.execute('INSERT INTO social_links (title, url, icon, sort_order) VALUES (?, ?, ?, ?)', ['TikTok', 'https://tiktok.com/@maxs1el', 'videocam', 2]);
     await client.execute('INSERT INTO social_links (title, url, icon, sort_order) VALUES (?, ?, ?, ?)', ['Discord Community', 'https://discord.gg/maxs1el', 'chat', 3]);
-    await client.execute('INSERT INTO social_links (title, url, icon, sort_order) VALUES (?, ?, ?, ?)', ['Join the Crew', 'https://t.me/maxs1el', 'group', 4]);
+    await client.execute('INSERT INTO social_links (title, url, icon, sort_order) VALUES (?, ?, ?, ?)', ['WhatsApp', 'https://wa.me/maxs1el', 'call', 4]);
     console.log('✅ Default social links created');
   }
 
@@ -156,21 +166,21 @@ async function initializeDatabase() {
   if (Number(productCheck.rows[0].c) === 0) {
     await client.execute(
       'INSERT INTO products (name, description, price, image, category, stock, badge_text, features) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      ['Netflix Premium', 'Unlock the ultimate cinematic experience.', 15.99, 'https://images.unsplash.com/photo-1574375927938-d5a98e8d6f74?w=400&h=400&fit=crop', 'Streaming', 124, '4K + HDR', '4K + HDR|4 Screens Simultaneously']
+      ['Netflix Premium', '4K + HDR | 4 Screens Simultaneously', 249000, 'https://images.unsplash.com/photo-1574375927938-d5a98e8d6f74?w=400&h=400&fit=crop', 'Streaming', 124, '4K + HDR', '4K + HDR|4 Screens Simultaneously']
     );
     await client.execute(
       'INSERT INTO products (name, description, price, image, category, stock, badge_text, features) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      ['Spotify Family', 'Ad-free music streaming.', 12.50, 'https://images.unsplash.com/photo-1611339555312-e607c8352fd7?w=400&h=400&fit=crop', 'Music', 89, 'Ad-free', 'Ad-free|Offline|6 Accounts']
+      ['Spotify Family', 'Ad-free | Offline | 6 Accounts', 189000, 'https://images.unsplash.com/photo-1611339555312-e607c8352fd7?w=400&h=400&fit=crop', 'Music', 89, 'Ad-free', 'Ad-free|Offline|6 Accounts']
     );
     await client.execute(
       'INSERT INTO products (name, description, price, image, category, stock, badge_text, features) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      ['YouTube Premium', 'Background play, ad-free videos.', 9.99, 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=400&h=400&fit=crop', 'Video', 200, 'Background Play', 'Background Play|Music Included']
+      ['YouTube Premium', 'Background Play | Music Included', 149000, 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=400&h=400&fit=crop', 'Video', 200, 'Background Play', 'Background Play|Music Included']
     );
     await client.execute(
       'INSERT INTO products (name, description, price, image, category, stock, badge_text, features) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      ['Disney+ Annual', 'Access Marvel, Star Wars, Pixar and more.', 79.90, 'https://images.unsplash.com/photo-1640499900704-b00380602aff?w=400&h=400&fit=crop', 'Streaming', 45, '4K', 'Marvel|Star Wars|Pixar|4K']
+      ['Disney+ Annual', 'Marvel | Star Wars | Pixar | 4K', 1199000, 'https://images.unsplash.com/photo-1640499900704-b00380602aff?w=400&h=400&fit=crop', 'Streaming', 45, '4K', 'Marvel|Star Wars|Pixar|4K']
     );
-    console.log('✅ Default products created');
+    console.log('✅ Default products created (IDR)');
   }
 
   const quoteCheck = await client.execute('SELECT COUNT(*) as c FROM daily_quotes');

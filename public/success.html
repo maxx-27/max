@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Payment Success - maxs1el</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#0df2f2", "background-dark": "#102222" },
+                    fontFamily: { "display": ["Space Grotesk"] },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100dvh;
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark font-display text-slate-100 min-h-screen flex flex-col">
+    <div class="relative flex min-h-screen w-full flex-col bg-background-dark overflow-x-hidden">
+        <!-- Top Bar -->
+        <div class="flex items-center bg-background-dark p-4 pb-2 justify-between">
+            <div class="text-primary flex size-12 shrink-0 items-center justify-start">
+                <span class="material-symbols-outlined text-[32px]">check_circle</span>
+            </div>
+            <h2 class="text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">
+                Payment Success</h2>
+        </div>
+
+        <!-- Success Header -->
+        <div class="flex flex-col items-center justify-center pt-12 pb-8">
+            <div class="bg-primary/10 p-6 rounded-full mb-6">
+                <span class="material-symbols-outlined text-primary text-[64px]">verified</span>
+            </div>
+            <h1 class="text-slate-100 tracking-tight text-[40px] font-bold leading-tight px-4 text-center">Success!</h1>
+            <p id="successMsg"
+                class="text-slate-400 text-base font-normal leading-normal pb-3 pt-2 px-6 text-center max-w-md">
+                Your purchase was successful. Your account has been provisioned and is ready for use.
+            </p>
+            <p id="productInfo" class="text-primary font-bold text-lg"></p>
+        </div>
+
+        <div class="max-w-xl mx-auto w-full px-4">
+            <h3
+                class="text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] pb-4 pt-4 border-b border-primary/10">
+                Account Details</h3>
+
+            <!-- Email -->
+            <div id="emailRow"
+                class="flex items-center gap-4 bg-background-dark px-0 min-h-[72px] py-4 justify-between border-b border-primary/10"
+                style="display:none">
+                <div class="flex items-center gap-4">
+                    <div class="text-primary flex items-center justify-center rounded bg-primary/10 shrink-0 size-12">
+                        <span class="material-symbols-outlined">mail</span>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <p class="text-slate-400 text-xs font-medium uppercase tracking-wider">Email</p>
+                        <p id="accountEmail" class="text-slate-100 text-base font-medium leading-normal line-clamp-1">-
+                        </p>
+                    </div>
+                </div>
+                <button onclick="copyText('accountEmail')"
+                    class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-primary/20 hover:bg-primary/30 text-primary text-sm font-bold leading-normal transition-colors">
+                    Copy
+                </button>
+            </div>
+
+            <!-- Password -->
+            <div id="passwordRow"
+                class="flex items-center gap-4 bg-background-dark px-0 min-h-[72px] py-4 justify-between border-b border-primary/10"
+                style="display:none">
+                <div class="flex items-center gap-4">
+                    <div class="text-primary flex items-center justify-center rounded bg-primary/10 shrink-0 size-12">
+                        <span class="material-symbols-outlined">lock</span>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <p class="text-slate-400 text-xs font-medium uppercase tracking-wider">Password</p>
+                        <p id="accountPassword"
+                            class="text-slate-100 text-base font-medium leading-normal line-clamp-1">-</p>
+                    </div>
+                </div>
+                <button onclick="copyText('accountPassword')"
+                    class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-primary/20 hover:bg-primary/30 text-primary text-sm font-bold leading-normal transition-colors">
+                    Copy
+                </button>
+            </div>
+
+            <!-- Invite Link -->
+            <div id="inviteRow"
+                class="flex items-center gap-4 bg-background-dark px-0 min-h-[72px] py-4 justify-between border-b border-primary/10"
+                style="display:none">
+                <div class="flex items-center gap-4">
+                    <div class="text-primary flex items-center justify-center rounded bg-primary/10 shrink-0 size-12">
+                        <span class="material-symbols-outlined">link</span>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <p class="text-slate-400 text-xs font-medium uppercase tracking-wider">Invite Link</p>
+                        <p id="accountInvite" class="text-slate-100 text-base font-medium leading-normal line-clamp-1">-
+                        </p>
+                    </div>
+                </div>
+                <button onclick="copyText('accountInvite')"
+                    class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-primary/20 hover:bg-primary/30 text-primary text-sm font-bold leading-normal transition-colors">
+                    Copy
+                </button>
+            </div>
+
+            <!-- Loading/Error State -->
+            <div id="loadingState" class="text-center py-8 text-slate-500">
+                <span class="material-symbols-outlined text-4xl animate-pulse">sync</span>
+                <p class="mt-2">Loading account details...</p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col gap-3 pt-10 pb-10">
+                <a href="/store"
+                    class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-background-dark text-lg font-bold leading-normal transition-transform active:scale-95">
+                    Back to Store
+                </a>
+                <a href="/"
+                    class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-transparent border-2 border-primary/20 text-slate-100 text-lg font-bold leading-normal hover:bg-primary/5 transition-all">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+
+        <div class="mt-auto p-8 flex justify-center opacity-30">
+            <div class="flex items-center gap-2">
+                <div class="size-2 rounded-full bg-primary"></div>
+                <div class="size-2 rounded-full bg-primary/60"></div>
+                <div class="size-2 rounded-full bg-primary/30"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get('order');
+
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target.closest('button');
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy', 2000);
+            });
+        }
+
+        function formatRupiah(num) { return 'Rp ' + Number(num).toLocaleString('id-ID'); }
+
+        async function loadAccount() {
+            if (!orderId) {
+                document.getElementById('loadingState').innerHTML = '<p class="text-red-400">No order ID provided</p>';
+                return;
+            }
+            try {
+                const res = await fetch('/api/orders/' + orderId + '/account');
+                const data = await res.json();
+
+                if (!data.success) {
+                    document.getElementById('loadingState').innerHTML = `<p class="text-yellow-400">${data.error || 'Payment not completed'}</p>`;
+                    return;
+                }
+
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('productInfo').textContent = data.product_name + ' — ' + formatRupiah(data.amount);
+
+                const acc = data.account;
+                if (acc.email) {
+                    document.getElementById('emailRow').style.display = 'flex';
+                    document.getElementById('accountEmail').textContent = acc.email;
+                }
+                if (acc.password) {
+                    document.getElementById('passwordRow').style.display = 'flex';
+                    document.getElementById('accountPassword').textContent = acc.password;
+                }
+                if (acc.invite_link) {
+                    document.getElementById('inviteRow').style.display = 'flex';
+                    document.getElementById('accountInvite').textContent = acc.invite_link;
+                }
+            } catch (err) {
+                document.getElementById('loadingState').innerHTML = '<p class="text-red-400">Failed to load account details</p>';
+            }
+        }
+
+        loadAccount();
+    </script>
+</body>
+
+</html>

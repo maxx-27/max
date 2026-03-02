@@ -119,4 +119,55 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     }
 });
 
+// ─── Product Account Management (Auto-Delivery) ───
+
+// POST /api/products/:id/accounts — admin adds account to product
+router.post('/:id/accounts', authMiddleware, async (req, res) => {
+    try {
+        const { email, password, invite_link } = req.body;
+        if (!email && !invite_link) return res.status(400).json({ error: 'Email or invite link required.' });
+
+        const db = getDb();
+        const product = await db.execute('SELECT id FROM products WHERE id = ?', [req.params.id]);
+        if (product.rows.length === 0) return res.status(404).json({ error: 'Product not found.' });
+
+        await db.execute(
+            'INSERT INTO product_accounts (product_id, email, password, invite_link) VALUES (?, ?, ?, ?)',
+            [req.params.id, email || '', password || '', invite_link || '']
+        );
+
+        const last = await db.execute('SELECT * FROM product_accounts ORDER BY id DESC LIMIT 1');
+        res.status(201).json(last.rows[0]);
+    } catch (err) {
+        console.error('Account add error:', err);
+        res.status(500).json({ error: 'Server error.' });
+    }
+});
+
+// GET /api/products/:id/accounts — admin views accounts for a product
+router.get('/:id/accounts', authMiddleware, async (req, res) => {
+    try {
+        const db = getDb();
+        const result = await db.execute(
+            'SELECT * FROM product_accounts WHERE product_id = ? ORDER BY is_sold ASC, created_at DESC',
+            [req.params.id]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Server error.' });
+    }
+});
+
+// DELETE /api/products/accounts/:accountId — admin deletes an account
+router.delete('/accounts/:accountId', authMiddleware, async (req, res) => {
+    try {
+        const db = getDb();
+        await db.execute('DELETE FROM product_accounts WHERE id = ? AND is_sold = 0', [req.params.accountId]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Server error.' });
+    }
+});
+
 module.exports = router;
+

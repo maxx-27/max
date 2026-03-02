@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Menu - maxs1el</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df2f2",
+                        "secondary": "#a855f7",
+                        "background-dark": "#102222",
+                    },
+                    fontFamily: { "display": ["Space Grotesk"] },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100dvh;
+        }
+
+        .pixel-grid {
+            background-image: radial-gradient(circle, rgba(13, 242, 242, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .neon-glow:hover {
+            box-shadow: 0 0 15px rgba(13, 242, 242, 0.4);
+            border-color: #0df2f2;
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark font-display text-slate-100 overflow-hidden">
+    <div class="relative flex h-screen w-full flex-col bg-background-dark overflow-hidden pixel-grid">
+        <!-- Top Bar -->
+        <div class="flex items-center bg-background-dark p-4 pb-4 justify-between border-b border-primary/20 z-10">
+            <a href="/" class="text-primary flex size-12 shrink-0 items-center justify-center cursor-pointer">
+                <span class="material-symbols-outlined text-3xl">close</span>
+            </a>
+            <h2 class="text-primary text-xl font-bold leading-tight tracking-widest uppercase flex-1 text-center">System
+                Menu</h2>
+            <div class="w-12"></div>
+        </div>
+
+        <!-- Menu Content -->
+        <div class="flex flex-col flex-1 p-6 gap-8 z-10 overflow-y-auto">
+            <!-- User Header -->
+            <div class="flex items-center gap-4 p-4 rounded-xl bg-primary/5 border border-primary/20">
+                <div class="size-14 rounded-lg bg-gradient-to-br from-primary to-secondary p-1">
+                    <div class="w-full h-full bg-background-dark rounded flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary">person</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-primary text-xs font-bold uppercase tracking-tighter">Welcome</p>
+                    <p class="text-slate-100 text-xl font-bold leading-tight">maxs1el</p>
+                </div>
+            </div>
+
+            <!-- Nav Links -->
+            <nav class="flex flex-col gap-3">
+                <a class="group flex h-16 items-center gap-4 rounded-xl px-5 bg-primary/10 border border-primary/30 hover:bg-primary/20 transition-all neon-glow"
+                    href="/">
+                    <div class="text-primary group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined text-3xl">home_app_logo</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-slate-100 text-lg font-bold leading-none">Home</p>
+                        <p class="text-primary/60 text-xs mt-1">Return to dashboard</p>
+                    </div>
+                    <span
+                        class="material-symbols-outlined ml-auto text-primary/40 group-hover:text-primary">chevron_right</span>
+                </a>
+                <a class="group flex h-16 items-center gap-4 rounded-xl px-5 bg-background-dark border border-slate-700 hover:border-secondary/50 transition-all"
+                    href="/store">
+                    <div class="text-secondary group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined text-3xl">star_half</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-slate-100 text-lg font-bold leading-none">Premium Apps</p>
+                        <p class="text-secondary/60 text-xs mt-1">Browse premium accounts</p>
+                    </div>
+                    <span
+                        class="material-symbols-outlined ml-auto text-slate-700 group-hover:text-secondary">chevron_right</span>
+                </a>
+                <a class="group flex h-16 items-center gap-4 rounded-xl px-5 bg-background-dark border border-slate-700 hover:border-primary/50 transition-all"
+                    href="/daily">
+                    <div class="text-primary group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined text-3xl">terminal</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-slate-100 text-lg font-bold leading-none">Daily Info</p>
+                        <p class="text-primary/60 text-xs mt-1">System status & news</p>
+                    </div>
+                    <span
+                        class="material-symbols-outlined ml-auto text-slate-700 group-hover:text-primary">chevron_right</span>
+                </a>
+                <a class="group flex h-16 items-center gap-4 rounded-xl px-5 bg-background-dark border border-slate-700 hover:border-secondary/50 transition-all"
+                    href="/profile">
+                    <div class="text-secondary group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined text-3xl">person_pin</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-slate-100 text-lg font-bold leading-none">Profile</p>
+                        <p class="text-secondary/60 text-xs mt-1">View creator profile</p>
+                    </div>
+                    <span
+                        class="material-symbols-outlined ml-auto text-slate-700 group-hover:text-secondary">chevron_right</span>
+                </a>
+                <a class="group flex h-16 items-center gap-4 rounded-xl px-5 bg-background-dark border border-slate-700 hover:border-primary/50 transition-all"
+                    href="/admin/login">
+                    <div class="text-primary group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined text-3xl">shield_person</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-slate-100 text-lg font-bold leading-none">Admin Dashboard</p>
+                        <p class="text-primary/60 text-xs mt-1">System core access</p>
+                    </div>
+                    <span
+                        class="material-symbols-outlined ml-auto text-slate-700 group-hover:text-primary">chevron_right</span>
+                </a>
+            </nav>
+
+            <!-- Footer Stats -->
+            <div class="mt-auto flex flex-col gap-4">
+                <div class="flex justify-between items-end">
+                    <div class="flex flex-col">
+                        <p class="text-slate-500 text-[10px] uppercase tracking-widest">Network Status</p>
+                        <p class="text-primary text-sm font-bold">CONNECTED_SECURE</p>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <p class="text-slate-500 text-[10px] uppercase tracking-widest">Version</p>
+                        <p class="text-secondary text-sm font-bold">V 2.0.4-PX</p>
+                    </div>
+                </div>
+                <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-primary w-2/3 shadow-[0_0_8px_#0df2f2]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative -->
+        <div class="absolute bottom-[-50px] right-[-50px] size-64 bg-secondary/10 blur-[100px] rounded-full"></div>
+        <div class="absolute top-20 left-[-30px] size-40 bg-primary/10 blur-[80px] rounded-full"></div>
+    </div>
+</body>
+
+</html>

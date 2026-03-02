@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Payment - maxs1el</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df2f2",
+                        "background-dark": "#120a07",
+                        "neon-blue": "#00f3ff",
+                        "neon-purple": "#bc00ff",
+                    },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100dvh;
+        }
+
+        .neon-text-blue {
+            text-shadow: 0 0 8px #00f3ff;
+        }
+
+        .neon-text-purple {
+            text-shadow: 0 0 8px #bc00ff;
+        }
+    </style>
+</head>
+
+<body class="font-display bg-background-dark text-slate-100 min-h-screen">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+        <!-- Header -->
+        <div
+            class="flex items-center bg-background-dark/80 backdrop-blur-md p-4 sticky top-0 z-50 border-b-2 border-neon-blue/30 justify-between">
+            <a href="/store" class="text-neon-blue flex size-12 shrink-0 items-center justify-center cursor-pointer">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <h2
+                class="text-neon-blue text-xl font-bold leading-tight tracking-wider uppercase neon-text-blue flex-1 text-center">
+                Payment QRIS</h2>
+            <div class="size-12"></div>
+        </div>
+
+        <div class="flex flex-col gap-6 p-6 max-w-md mx-auto w-full">
+            <!-- Merchant Info -->
+            <div class="flex flex-col items-center gap-4 py-4">
+                <div class="relative p-1 bg-neon-purple rounded-xl">
+                    <div
+                        class="bg-background-dark aspect-square rounded-lg flex items-center justify-center overflow-hidden border-2 border-neon-purple p-3">
+                        <span class="material-symbols-outlined text-neon-purple text-5xl">storefront</span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center justify-center text-center">
+                    <p class="text-neon-purple text-2xl font-bold leading-tight neon-text-purple tracking-tight">maxs1el
+                        Store</p>
+                    <p id="productName" class="text-slate-400 text-sm font-medium mt-1">Loading...</p>
+                    <div class="flex items-center gap-1 mt-1">
+                        <span class="material-symbols-outlined text-neon-blue text-sm">verified</span>
+                        <p class="text-neon-blue text-xs font-bold uppercase tracking-widest">Verified Merchant</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Code Card -->
+            <div
+                class="p-1 bg-gradient-to-br from-neon-blue via-neon-purple to-neon-blue rounded-xl shadow-[0_0_30px_rgba(0,243,255,0.2)]">
+                <div class="flex flex-col items-center justify-start rounded-lg bg-background-dark p-6 gap-6">
+                    <div id="qrContainer" class="bg-white p-4 rounded-lg shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                        <div class="w-60 h-60 flex items-center justify-center text-slate-500">
+                            <span class="material-symbols-outlined text-6xl animate-pulse">qr_code_2</span>
+                        </div>
+                    </div>
+                    <div class="w-full space-y-2 text-center">
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Total Amount</p>
+                        <p id="totalAmount" class="text-white text-3xl font-bold leading-tight neon-text-blue">Rp 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timer -->
+            <div class="flex flex-col gap-3">
+                <p class="text-center text-slate-400 text-xs font-bold uppercase tracking-widest">Payment Expires In</p>
+                <div class="flex gap-3 justify-center">
+                    <div class="flex flex-col items-center gap-2">
+                        <div
+                            class="flex h-12 w-16 items-center justify-center rounded-lg border-2 border-neon-purple bg-neon-purple/10">
+                            <p id="timerHrs" class="text-neon-purple text-xl font-bold">00</p>
+                        </div>
+                        <p class="text-slate-500 text-[10px] font-bold uppercase">Hrs</p>
+                    </div>
+                    <div class="flex h-12 items-center text-neon-purple font-bold text-xl">:</div>
+                    <div class="flex flex-col items-center gap-2">
+                        <div
+                            class="flex h-12 w-16 items-center justify-center rounded-lg border-2 border-neon-purple bg-neon-purple/10">
+                            <p id="timerMin" class="text-neon-purple text-xl font-bold">15</p>
+                        </div>
+                        <p class="text-slate-500 text-[10px] font-bold uppercase">Min</p>
+                    </div>
+                    <div class="flex h-12 items-center text-neon-purple font-bold text-xl">:</div>
+                    <div class="flex flex-col items-center gap-2">
+                        <div
+                            class="flex h-12 w-16 items-center justify-center rounded-lg border-2 border-neon-purple bg-neon-purple/10">
+                            <p id="timerSec" class="text-neon-purple text-xl font-bold">00</p>
+                        </div>
+                        <p class="text-slate-500 text-[10px] font-bold uppercase">Sec</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col gap-3 mt-4">
+                <button id="btnCheckPayment" onclick="checkPayment()"
+                    class="w-full py-4 rounded-lg bg-neon-blue text-background-dark font-black text-lg uppercase tracking-tighter flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] transition-all">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    Check Payment Status
+                </button>
+                <a href="/store"
+                    class="w-full py-4 rounded-lg border-2 border-neon-purple text-neon-purple font-black text-lg uppercase tracking-tighter flex items-center justify-center gap-2 hover:bg-neon-purple/10 active:scale-[0.98] transition-all">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Back to Store
+                </a>
+            </div>
+        </div>
+        <div class="h-8"></div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get('order');
+        let countdownSeconds = 15 * 60;
+
+        function formatRupiah(num) { return 'Rp ' + Number(num).toLocaleString('id-ID'); }
+
+        async function loadOrder() {
+            if (!orderId) { document.getElementById('productName').textContent = 'No order found'; return; }
+            try {
+                const res = await fetch('/api/orders/' + orderId);
+                const order = await res.json();
+                document.getElementById('productName').textContent = order.product_name;
+                document.getElementById('totalAmount').textContent = formatRupiah(order.amount);
+
+                if (order.qr_url) {
+                    document.getElementById('qrContainer').innerHTML = `<img src="${order.qr_url}" class="w-60 h-60 object-contain" alt="QRIS QR Code"/>`;
+                } else if (order.payment_url) {
+                    document.getElementById('qrContainer').innerHTML = `<a href="${order.payment_url}" target="_blank" class="flex flex-col items-center gap-2 p-8"><span class="material-symbols-outlined text-6xl text-primary">open_in_new</span><span class="text-sm text-slate-600">Click to open payment</span></a>`;
+                }
+
+                if (order.status === 'paid') {
+                    window.location.href = '/success?order=' + orderId;
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        function startCountdown() {
+            const interval = setInterval(() => {
+                if (countdownSeconds <= 0) { clearInterval(interval); return; }
+                countdownSeconds--;
+                const h = Math.floor(countdownSeconds / 3600);
+                const m = Math.floor((countdownSeconds % 3600) / 60);
+                const s = countdownSeconds % 60;
+                document.getElementById('timerHrs').textContent = String(h).padStart(2, '0');
+                document.getElementById('timerMin').textContent = String(m).padStart(2, '0');
+                document.getElementById('timerSec').textContent = String(s).padStart(2, '0');
+            }, 1000);
+        }
+
+        async function checkPayment() {
+            const btn = document.getElementById('btnCheckPayment');
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Checking...';
+            try {
+                const res = await fetch('/api/orders/' + orderId);
+                const order = await res.json();
+                if (order.status === 'paid') {
+                    window.location.href = '/success?order=' + orderId;
+                } else {
+                    btn.innerHTML = '<span class="material-symbols-outlined">schedule</span> Not paid yet, try again';
+                    setTimeout(() => {
+                        btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Check Payment Status';
+                    }, 3000);
+                }
+            } catch (err) {
+                btn.innerHTML = '<span class="material-symbols-outlined">error</span> Error checking';
+            }
+        }
+
+        loadOrder();
+        startCountdown();
+        setInterval(checkPayment, 30000); // Auto-check every 30s
+    </script>
+</body>
+
+</html>

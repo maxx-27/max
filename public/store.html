@@ -4,8 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Premium Apps | maxs1el</title>
-    <meta name="description" content="Browse premium app subscriptions from maxs1el store" />
+    <title>Premium Apps - maxs1el</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
@@ -16,7 +15,11 @@
             darkMode: "class",
             theme: {
                 extend: {
-                    colors: { "primary": "#0df2f2", "background-light": "#f5f8f8", "background-dark": "#102222", "accent-purple": "#bc13fe" },
+                    colors: {
+                        "primary": "#0df2f2",
+                        "background-dark": "#102222",
+                        "accent-purple": "#bc13fe",
+                    },
                     fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
                     borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
                 },
@@ -24,70 +27,45 @@
         }
     </script>
     <style>
-        .pixel-border {
-            box-shadow: 0 -4px 0 -2px #102222, 0 4px 0 -2px #102222, -4px 0 0 -2px #102222, 4px 0 0 -2px #102222, 0 0 0 2px #0df2f2;
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100dvh;
         }
 
         .pixel-bg {
             background-image: linear-gradient(45deg, rgba(13, 242, 242, 0.05) 25%, transparent 25%, transparent 50%, rgba(13, 242, 242, 0.05) 50%, rgba(13, 242, 242, 0.05) 75%, transparent 75%, transparent);
             background-size: 4px 4px;
         }
-
-        .skeleton {
-            background: linear-gradient(90deg, #1a3333 25%, #2a4444 50%, #1a3333 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                background-position: 200% 0;
-            }
-
-            100% {
-                background-position: -200% 0;
-            }
-        }
-
-        body {
-            min-height: max(884px, 100dvh);
-        }
     </style>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
-    <div
-        class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+<body class="bg-background-dark font-display text-slate-100 antialiased">
+    <div class="relative flex min-h-screen w-full flex-col bg-background-dark overflow-x-hidden">
         <!-- Header -->
-        <header
-            class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between border-b border-primary/10">
+        <header class="flex items-center bg-background-dark p-4 pb-2 justify-between border-b border-primary/10">
             <div class="text-primary flex size-12 shrink-0 items-center justify-center">
                 <span class="material-symbols-outlined text-3xl">videogame_asset</span>
             </div>
-            <h2
-                class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight flex-1 text-center uppercase">
+            <h2 class="text-slate-100 text-xl font-bold leading-tight tracking-tight flex-1 text-center uppercase">
                 Premium Apps</h2>
             <div class="flex w-12 items-center justify-end"></div>
         </header>
 
         <!-- Category Filter -->
-        <div class="flex gap-3 p-4 overflow-x-auto no-scrollbar" id="category-bar">
-            <button
-                class="category-btn active flex h-10 shrink-0 items-center justify-center gap-x-2 rounded bg-primary text-background-dark px-4 font-bold border-b-4 border-primary/40"
-                data-category="All" onclick="filterCategory('All', this)">
+        <div class="flex gap-3 p-4 overflow-x-auto" id="categoryFilter">
+            <button onclick="filterCategory('')"
+                class="cat-btn active flex h-10 shrink-0 items-center justify-center gap-x-2 rounded bg-primary text-background-dark px-4 font-bold border-b-4 border-primary/40">
                 <span class="text-sm uppercase">All</span>
                 <span class="material-symbols-outlined text-lg">filter_list</span>
             </button>
         </div>
 
         <!-- Product List -->
-        <div class="flex flex-col gap-6 p-4" id="products-container">
-            <div class="skeleton h-40 rounded-xl"></div>
-            <div class="skeleton h-40 rounded-xl"></div>
-            <div class="skeleton h-40 rounded-xl"></div>
+        <div class="flex flex-col gap-6 p-4" id="productList">
+            <div class="text-center text-slate-500 py-8">Loading products...</div>
         </div>
 
-        <div class="h-24 bg-background-light dark:bg-background-dark"></div>
+        <div class="h-24 bg-background-dark"></div>
 
         <!-- Bottom Navigation -->
         <div class="fixed bottom-0 left-0 right-0 flex flex-col z-50">
@@ -101,12 +79,12 @@
                     <div class="absolute -top-1 w-12 h-1 bg-primary rounded-full"></div>
                     <span class="material-symbols-outlined text-2xl"
                         style="font-variation-settings: 'FILL' 1">sports_esports</span>
-                    <p class="text-[10px] font-bold uppercase tracking-wider">Games</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider">Store</p>
                 </a>
                 <a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors"
                     href="/daily">
                     <span class="material-symbols-outlined text-2xl">palette</span>
-                    <p class="text-[10px] font-bold uppercase tracking-wider">Themes</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider">Daily</p>
                 </a>
                 <a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors"
                     href="/profile">
@@ -117,87 +95,81 @@
         </div>
     </div>
 
-    <script src="/js/app.js"></script>
-    <script src="/js/theme.js"></script>
     <script>
+        const categoryColors = { 'Streaming': 'accent-purple', 'Music': 'primary', 'Video': 'accent-purple', 'Gaming': 'primary' };
+
+        function formatRupiah(num) {
+            return 'Rp ' + Number(num).toLocaleString('id-ID');
+        }
+
         let allProducts = [];
         let categories = [];
 
-        document.addEventListener('DOMContentLoaded', async () => {
+        async function loadProducts() {
             try {
-                // Load categories
-                categories = await API.get('/api/products/categories');
-                const catBar = document.getElementById('category-bar');
+                const [prodRes, catRes] = await Promise.all([
+                    fetch('/api/products'), fetch('/api/products/categories')
+                ]);
+                allProducts = await prodRes.json();
+                categories = await catRes.json();
+
+                // Build category buttons
+                const filterDiv = document.getElementById('categoryFilter');
                 categories.forEach(cat => {
                     const btn = document.createElement('button');
-                    btn.className = 'category-btn flex h-10 shrink-0 items-center justify-center gap-x-2 rounded bg-primary/10 text-primary px-4 font-bold border-b-4 border-primary/20';
-                    btn.dataset.category = cat;
-                    btn.onclick = () => filterCategory(cat, btn);
-                    btn.innerHTML = `<span class="text-sm uppercase">${cat}</span><span class="material-symbols-outlined text-lg">keyboard_arrow_down</span>`;
-                    catBar.appendChild(btn);
+                    btn.className = 'cat-btn flex h-10 shrink-0 items-center justify-center gap-x-2 rounded bg-primary/10 text-primary px-4 font-bold border-b-4 border-primary/20';
+                    btn.innerHTML = `<span class="text-sm uppercase">${cat}</span>`;
+                    btn.onclick = () => filterCategory(cat);
+                    filterDiv.appendChild(btn);
                 });
 
-                // Load products
-                allProducts = await API.get('/api/products');
                 renderProducts(allProducts);
             } catch (err) {
-                console.error('Failed to load products:', err);
-                document.getElementById('products-container').innerHTML = '<p class="text-center text-slate-500">Failed to load products.</p>';
+                document.getElementById('productList').innerHTML = '<p class="text-center text-red-400 py-8">Failed to load products</p>';
             }
-        });
+        }
 
-        function filterCategory(cat, btn) {
-            // Update active state
-            document.querySelectorAll('.category-btn').forEach(b => {
-                b.className = 'category-btn flex h-10 shrink-0 items-center justify-center gap-x-2 rounded bg-primary/10 text-primary px-4 font-bold border-b-4 border-primary/20';
+        function filterCategory(cat) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = btn.className.replace('bg-primary text-background-dark', 'bg-primary/10 text-primary').replace('border-primary/40', 'border-primary/20');
             });
-            btn.className = 'category-btn active flex h-10 shrink-0 items-center justify-center gap-x-2 rounded bg-primary text-background-dark px-4 font-bold border-b-4 border-primary/40';
+            event.target.closest('.cat-btn').className = event.target.closest('.cat-btn').className.replace('bg-primary/10 text-primary', 'bg-primary text-background-dark').replace('border-primary/20', 'border-primary/40');
 
-            const filtered = cat === 'All' ? allProducts : allProducts.filter(p => p.category === cat);
+            const filtered = cat ? allProducts.filter(p => p.category === cat) : allProducts;
             renderProducts(filtered);
         }
 
         function renderProducts(products) {
-            const container = document.getElementById('products-container');
-            container.innerHTML = '';
-
+            const container = document.getElementById('productList');
             if (products.length === 0) {
-                container.innerHTML = '<p class="text-center text-slate-500 py-8">No products found.</p>';
+                container.innerHTML = '<p class="text-center text-slate-500 py-8">No products found</p>';
                 return;
             }
-
-            products.forEach(product => {
-                const isStreaming = product.category === 'Streaming' || product.category === 'Video';
-                const colorClass = isStreaming ? 'accent-purple' : 'primary';
-
-                const card = document.createElement('div');
-                card.className = 'flex items-stretch justify-between gap-4 rounded-xl bg-primary/5 border border-primary/20 p-5 shadow-lg relative overflow-hidden group cursor-pointer';
-                card.onclick = () => window.location.href = `/product.html?id=${product.id}`;
-
-                const features = product.features || [];
-                const featureStr = features.join(' | ');
-
-                card.innerHTML = `
-          <div class="absolute top-0 right-0 w-24 h-24 bg-${colorClass}/10 blur-3xl rounded-full -mr-10 -mt-10"></div>
-          <div class="flex flex-[2_2_0px] flex-col gap-4 relative z-10">
-            <div class="flex flex-col gap-1">
-              <span class="text-${colorClass} text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 bg-${colorClass}/10 w-fit rounded">${product.category}</span>
-              <h3 class="text-slate-100 text-lg font-bold leading-tight">${product.name}</h3>
-              <p class="text-slate-400 text-xs font-normal leading-normal">${featureStr}</p>
+            container.innerHTML = products.map(p => {
+                const colorClass = categoryColors[p.category] || 'primary';
+                return `
+        <div class="flex items-stretch justify-between gap-4 rounded-xl bg-primary/5 border border-primary/20 p-5 shadow-lg relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-${colorClass}/10 blur-3xl rounded-full -mr-10 -mt-10"></div>
+            <div class="flex flex-[2_2_0px] flex-col gap-4 relative z-10">
+                <div class="flex flex-col gap-1">
+                    <span class="text-${colorClass} text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 bg-${colorClass}/10 w-fit rounded">${p.category}</span>
+                    <h3 class="text-slate-100 text-lg font-bold leading-tight">${p.name}</h3>
+                    <p class="text-slate-400 text-xs font-normal leading-normal">${(p.features || []).join(' | ')}</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-primary text-xl font-bold">${formatRupiah(p.price)}</span>
+                    <a href="/product.html?id=${p.id}" class="flex min-w-[100px] cursor-pointer items-center justify-center rounded h-10 px-4 bg-primary text-background-dark gap-2 text-sm font-bold uppercase tracking-tighter border-b-4 border-primary/50 hover:translate-y-0.5 transition-all">
+                        <span>Buy Now</span>
+                        <span class="material-symbols-outlined text-sm">shopping_cart</span>
+                    </a>
+                </div>
             </div>
-            <div class="flex items-center gap-3">
-              <span class="text-primary text-xl font-bold">$${product.price.toFixed(2)}</span>
-              <button class="flex min-w-[100px] cursor-pointer items-center justify-center rounded h-10 px-4 bg-primary text-background-dark gap-2 text-sm font-bold uppercase tracking-tighter border-b-4 border-primary/50 hover:translate-y-0.5 transition-all" onclick="event.stopPropagation(); window.location.href='/product.html?id=${product.id}'">
-                <span>Buy Now</span>
-                <span class="material-symbols-outlined text-sm">shopping_cart</span>
-              </button>
-            </div>
-          </div>
-          <div class="w-24 h-24 bg-center bg-no-repeat bg-contain rounded-lg flex-1 border-2 border-primary/30 pixel-bg" style="background-image: url('${product.image || '/uploads/products/default.png'}')"></div>
-        `;
-                container.appendChild(card);
-            });
+            <div class="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-lg flex-1 border-2 border-primary/30 pixel-bg" style="background-image: url('${p.image || ''}')"></div>
+        </div>`;
+            }).join('');
         }
+
+        loadProducts();
     </script>
 </body>
 

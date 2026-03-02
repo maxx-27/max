@@ -26,9 +26,17 @@ router.post('/', async (req, res) => {
         if (!product) return res.status(404).json({ error: 'Product not found.' });
         if (product.stock <= 0) return res.status(400).json({ error: 'Product is out of stock.' });
 
+        // Check available accounts
+        const accountCheck = await db.execute(
+            'SELECT COUNT(*) as c FROM product_accounts WHERE product_id = ? AND is_sold = 0', [product_id]
+        );
+        if (Number(accountCheck.rows[0].c) === 0) {
+            return res.status(400).json({ error: 'No accounts available for this product.' });
+        }
+
         const orderId = generateOrderId();
 
-        const payment = await tokopay.createTransaction(orderId, product.price * 15000, payment_method, {
+        const payment = await tokopay.createTransaction(orderId, product.price, payment_method, {
             productId: String(product.id),
             productName: product.name,
         });
@@ -63,6 +71,40 @@ router.get('/:orderId', async (req, res) => {
     }
 });
 
+// GET /api/orders/:orderId/account — buyer gets auto-delivered account after payment
+router.get('/:orderId/account', async (req, res) => {
+    try {
+        const db = getDb();
+        const orderResult = await db.execute('SELECT * FROM orders WHERE order_id = ?', [req.params.orderId]);
+        if (orderResult.rows.length === 0) return res.status(404).json({ error: 'Order not found.' });
+
+        const order = orderResult.rows[0];
+        if (order.status !== 'paid') {
+            return res.status(400).json({ error: 'Payment not completed yet.', status: order.status });
+        }
+
+        const accountResult = await db.execute(
+            'SELECT email, password, invite_link FROM product_accounts WHERE order_id = ?',
+            [order.order_id]
+        );
+
+        if (accountResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Account not yet assigned.' });
+        }
+
+        res.json({
+            success: true,
+            order_id: order.order_id,
+            product_name: order.product_name,
+            amount: order.amount,
+            account: accountResult.rows[0]
+        });
+    } catch (err) {
+        console.error('Account retrieval error:', err);
+        res.status(500).json({ error: 'Server error.' });
+    }
+});
+
 // POST /api/orders/webhook/tokopay
 router.post('/webhook/tokopay', async (req, res) => {
     try {
@@ -84,8 +126,25 @@ router.post('/webhook/tokopay', async (req, res) => {
             [newStatus, data.trx_id || null, data.reff_id]
         );
 
+        // Auto-delivery: assign account to order on successful payment
         if (newStatus === 'paid') {
             await db.execute('UPDATE products SET stock = MAX(0, stock - 1) WHERE id = ?', [order.product_id]);
+
+            // Find first unsold account for this product
+            const accountResult = await db.execute(
+                'SELECT id FROM product_accounts WHERE product_id = ? AND is_sold = 0 LIMIT 1',
+                [order.product_id]
+            );
+
+            if (accountResult.rows.length > 0) {
+                await db.execute(
+                    'UPDATE product_accounts SET is_sold = 1, order_id = ? WHERE id = ?',
+                    [order.order_id, accountResult.rows[0].id]
+                );
+                console.log('✅ Account auto-delivered for order:', order.order_id);
+            } else {
+                console.warn('⚠️ No available accounts for product:', order.product_id);
+            }
         }
 
         res.json({ success: true, status: newStatus });
