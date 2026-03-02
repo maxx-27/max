@@ -35,6 +35,28 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Analytics tracking
 app.use(analyticsMiddleware);
 
+// ─── Debug endpoint (TEMPORARY) ───
+app.get('/api/debug', async (req, res) => {
+    const info = {
+        env_TURSO_URL: process.env.TURSO_DATABASE_URL ? 'SET (' + process.env.TURSO_DATABASE_URL.substring(0, 30) + '...)' : 'NOT SET',
+        env_TURSO_TOKEN: process.env.TURSO_AUTH_TOKEN ? 'SET (length: ' + process.env.TURSO_AUTH_TOKEN.length + ')' : 'NOT SET',
+        env_JWT: process.env.JWT_SECRET ? 'SET' : 'NOT SET',
+        env_VERCEL: process.env.VERCEL || 'NOT SET',
+        node_version: process.version,
+        dbReady: dbReady,
+    };
+    try {
+        const { getDb } = require('./database/init');
+        const db = getDb();
+        const result = await db.execute('SELECT COUNT(*) as c FROM admins');
+        info.db_test = 'OK - admins count: ' + result.rows[0].c;
+    } catch (err) {
+        info.db_test = 'FAIL: ' + err.message;
+        info.db_error_stack = err.stack;
+    }
+    res.json(info);
+});
+
 // ─── API Routes ───
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/profile', require('./routes/profile'));
