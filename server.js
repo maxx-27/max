@@ -44,10 +44,22 @@ app.use('/api/orders', require('./routes/orders'));
 app.use('/api/daily-quote', require('./routes/quotes'));
 app.use('/api/analytics', require('./routes/analytics'));
 
-// ─── Page Routes ───
-const servePage = (filePath) => (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', filePath));
-};
+// ─── Page Routes (inline HTML read for Vercel compatibility) ───
+const fs = require('fs');
+
+function servePage(filePath) {
+    return (req, res) => {
+        const fullPath = path.join(__dirname, 'public', filePath);
+        try {
+            const html = fs.readFileSync(fullPath, 'utf8');
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.status(200).send(html);
+        } catch (err) {
+            console.error('Page not found:', fullPath, err.message);
+            res.status(404).send('Page not found');
+        }
+    };
+}
 
 app.get('/', servePage('index.html'));
 app.get('/store', servePage('store.html'));
@@ -63,12 +75,12 @@ app.use((req, res) => {
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API endpoint not found.' });
     }
-    res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'));
+    servePage('index.html')(req, res);
 });
 
-// ─── Error Handler ───
+// ─── Error Handler (Express v5 needs 4 args) ───
 app.use((err, req, res, next) => {
-    console.error('Server error:', err);
+    console.error('Server error:', err.stack || err);
     res.status(500).json({ error: 'Internal server error.' });
 });
 
